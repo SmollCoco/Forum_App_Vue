@@ -1,0 +1,43 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Production build
+dist/
+build/
+
+# Local environment files
+.env
+.env.*.local
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Optional cache folders
+.cache/
+.temp/
+*.tmp
+
+# Testing
+coverage/
+*.lcov
+
+# Output of 'npm pack'
+*.tgz
+
+# Other
+*.local
