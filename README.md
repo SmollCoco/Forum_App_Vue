@@ -1,35 +1,10 @@
 # Forum App
 
-This template should help get you started developing with Vue 3 in Vite.
+### Task Allocation
 
-## Recommended IDE Setup
+The project is divided into four primary components, each assigned to a team member:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- **Authentication**: Managed by *Manal ZAIDI*.
+- **Discussion Management**: Overseen by *Ahmed Yassine IBHI*.
+- **Search and Navigation**: Handled by *Aya IGADERN*.
+- **Moderation**: Supervised by *Youssef BENTALEB*.
