@@ -1,30 +1,45 @@
+<!-- eslint-disable no-unused-vars -->
 <script setup>
-const props=defineProps({
-  username:{
+import { ref } from 'vue';
+import SearchBar from './SearchBar.vue'
+const props = defineProps({
+  username: {
     type: String,
     default: "",
   }
 });
 
-
+const UserType = Object.freeze({
+  ADMIN: 1,
+  USER: 2,
+  GUEST: 3,
+});
+let type = 3;
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <router-link to="/" class="navbar-brand h1 fs-1" >Forum</router-link>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
-      <div v-if="username">
-        <button class="btn btn-info"><router-link :to="`/profile/${username}`" class="nav-link active" aria-current="page" >Profile</router-link></button>
+  <div class=" navbar navbar-expand d-flex justify-content-between p-3 border-bottom">
+    <div>
+      <router-link to="/"><img src="../assets/logo.png" width="120px"></router-link>
+    </div>
+      <search-bar class="my-2"/>
+    <div>
+      <div v-if="type == UserType.ADMIN || type == UserType.USER">
+        <button class="btn btn-primary rounded-pill">
+          <router-link :to="`/profile/${username}`" class="nav-link active" aria-current="page"><span
+              class="fw-bold text-white"> Profile</span></router-link>
+        </button>
       </div>
       <div v-else class="d-flex gap-3">
-        <button class="btn btn-outline-primary"><router-link to="/login" class="nav-link active" aria-current="page" >Login</router-link></button>
-        <button class="btn btn-outline-success"><router-link to="/register" class="nav-link active" aria-current="page" >Register</router-link></button>
+        <button class="btn btn-primary rounded-pill"><router-link to="/login" class="nav-link active"
+            aria-current="page"> <span class="fw-bold text-white"> Login</span></router-link></button>
+        <button class="btn btn-success rounded-pill"><router-link to="/register" class="nav-link active"
+            aria-current="page"><span class="fw-bold text-white"> Register</span></router-link></button>
       </div>
     </div>
   </div>
-</nav>
 </template>
+
+<style scoped>
+
+</style>
