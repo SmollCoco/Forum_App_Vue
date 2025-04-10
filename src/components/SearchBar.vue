@@ -14,10 +14,10 @@ const search_field = ref("");
         <div class="shadow-lg rounded">
             <!--This will contain the results of the search-->
             <!--We can for example run the search as long as he is typing and based on that show him the top 3 elements that we got from the search-->
-            
-            <!-- <SearchSuggestionItem value="Ayouta" type="User" />
-            <SearchSuggestionItem value="Project" type="Topic" /> -->
-           
+            <!-- 
+            <SearchSuggestionItem value="Ayouta" type="User" />
+            <SearchSuggestionItem value="Project" type="Topic" />
+            -->
         </div>
     </div>
 </template>
