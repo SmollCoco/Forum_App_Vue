@@ -3,3 +3,13 @@
     "default": "forum-app-vue"
   }
 }
+=======
+{
+  "projects": {
+    "default": "forum-app-vue",
+    "forum-app": "forum-app-vue"
+  },
+  "targets": {},
+  "etags": {}
+}
+
