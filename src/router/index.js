@@ -35,6 +35,11 @@ const router = createRouter({
       component: DiscussionView,
     },
     {
+      path: '/discussion/topic/:topic',
+      name: 'Topic Discussions',
+      component: HomeView,
+    },
+    {
       path: '/Admin/:username',
       name: 'Admin',
       component: AdminView,
