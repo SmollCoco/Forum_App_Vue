@@ -24,6 +24,7 @@
             class="d-flex gap-4 text-decoration-none align-items-center"><img src="../assets/tag.png" width="40"
                 class="rounded-circle d-block"> <span class="d-block link"> topic/{{ value }} </span></router-link>
     </div>
+    
 </template>
 
 <style scoped>
