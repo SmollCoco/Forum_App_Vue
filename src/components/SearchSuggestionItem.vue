@@ -4,18 +4,19 @@
         type: {
             type: String,
             required: true,
-            default: "User", // Can be either a user or a 'Topic'
+            default: "", // Can be either a user or a 'Topic'
         },
         value: {
             type: String,
             required: true,
-            default: "Aya",
+            default: "",
         }
     })
 </script>
 
 <template>
-    <div class="w-100 p-2 d-flex gap-lg-1 border-bottom">
+    
+    <div class="w-100 p-2 d-flex gap-lg-1 border-bottom  ">
         <router-link v-if="type == 'User' " :to="`/profile/${value}`"
             class="d-flex gap-4 text-decoration-none align-items-center"><img src="../assets/user.png" width="40"
                 class="rounded-circle d-block"> <span class="d-block link"> u/{{ value }} </span></router-link>
@@ -36,4 +37,5 @@
 .link:hover{
     color: rgb(10, 73, 209);
 }
+
 </style>
