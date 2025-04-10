@@ -1,6 +1,6 @@
 <template>
-    <form>
-        <div class="formitem" @submit.prevent="handleLogin">
+    <form @submit.prevent="handleLogin">
+        <div class="formitem">
             <label for="email">
                 Email:
             </label>
@@ -13,7 +13,7 @@
             </label>
             <input type="password" id="password" v-model="password" required />
         </div>
-        <button type="submit" >Login</button>
+        <button type="submit">Login</button>
     </form>
 </template>
 
@@ -30,6 +30,8 @@ const handleLogin = async () => {
     const router = useRouter()
     try {
         await loginUser(email.value, password.value)
+        alert('Login successful!')
+        // Redirect to the home page or any other page after successful login
         router.push('/')
     } catch (error) {
         console.error('Login failed:', error)
