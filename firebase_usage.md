@@ -1,3 +1,6 @@
-# Guide on how to use Firebase in the project
+wherever you need to use Firebase, you can import from src/firebase.js:
 
-# Firebase Setup and Usage Guide
+```javascript
+Copy code
+import { auth, db } from '@/firebase';
+```
