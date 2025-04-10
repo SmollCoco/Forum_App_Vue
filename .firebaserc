@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "forum-app-vue"
-  }
+    "default": "forum-app-vue",
+    "forum-app": "forum-app-vue"
+  },
+  "targets": {},
+  "etags": {}
 }
