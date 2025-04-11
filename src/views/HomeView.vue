@@ -1,17 +1,14 @@
 <template>
    <div class="d-flex flex-column">
-      <NavbarItem class="z-1"/>
-      <DiscussionList :topic="route.params.topic"  class="mt-5 z-n1"/>
-      
+      <NavbarItem class="z-2"/>
+      <DiscussionList :topic="route.params.topic" class="mt-5"/>
    </div>
 </template>
 
 <script setup>
-
+import { useRoute } from 'vue-router';
 import NavbarItem from '../components/NavbarItem.vue';
 import DiscussionList from '@/components/DiscussionList.vue';
-import { useRoute } from 'vue-router';
-const route=useRoute();
-console.log(route);
 
+const route  = useRoute();
 </script>

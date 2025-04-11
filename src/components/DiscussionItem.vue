@@ -37,7 +37,7 @@ const props = defineProps({
     }
 });
 
-let date_string = computed(() => { return get_date_string(props.date)});
+let date_string = computed(() => { return get_date_string(props.date) });
 
 let preview = computed(() => {
     return props.contenu.substring(0, 50);
@@ -98,12 +98,14 @@ let show_response = ref(false);
 .div-link:hover {
     text-decoration: underline;
 }
-.fx-w{
+
+.fx-w {
     width: 75px;
     position: relative;
     background-color: rgb(219, 219, 219);
 }
-.fx-w:hover{
+
+.fx-w:hover {
     background-color: black;
     color: white;
 }
