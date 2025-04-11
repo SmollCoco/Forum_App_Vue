@@ -76,8 +76,8 @@ let show_response = ref(false);
                         </span>
                     </router-link>
                     <span style="color: gray; font-size: small;"> | {{ date_string }} | </span>
-                    <div v-for="(topic, index) of topic" :key="index">
-                        <topic-item :topic="topic" />
+                    <div v-for="(i, index) of topic" :key="index">
+                        <topic-item :topic="i" />
                     </div>
                 </div>
                 <div class="fs-3 fw-bold div-link"> {{ titre }}</div>

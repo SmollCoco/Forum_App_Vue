@@ -13,7 +13,7 @@
 
 <template>
     <div>
-        <RouterLink :to="`/discussions/topic/${topic}`">
+        <RouterLink :to="`/discussion/topic/${topic}`">
             <button type="button" class="btn btn-outline-primary btn-sm">{{ topic }}</button>
         </RouterLink>
     </div>

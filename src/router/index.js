@@ -5,6 +5,7 @@ import RegisterView from '../views/RegisterView.vue'
 import AdminView from '../views/AdminView.vue'
 import DiscussionView from '../views/DiscussionView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import DiscussionList from '@/components/DiscussionList.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,8 +37,9 @@ const router = createRouter({
     },
     {
       path: '/discussion/topic/:topic',
-      name: 'Topic Discussions',
+      name: 'TopicDiscussions',
       component: HomeView,
+      props:true,
     },
     {
       path: '/Admin/:username',
