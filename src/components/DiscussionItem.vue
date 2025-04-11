@@ -3,6 +3,7 @@
 import { ref, computed } from 'vue';
 import TopicItem from './TopicItem.vue';
 import ReplyModal from './ReplyModal.vue';
+import { get_date_string } from '../composables/dateString'
 const props = defineProps({
     id: {
         type: String,
@@ -36,25 +37,7 @@ const props = defineProps({
     }
 });
 
-let date_string = computed(() => {
-    const timestamp = props.date;
-
-    if (timestamp && typeof timestamp.seconds === 'number') {
-        const jsDate = new Date(timestamp.seconds * 1000);
-
-        return jsDate.toLocaleString('fr-FR', {
-            weekday: 'long',     // optionnel : "jeudi"
-            day: '2-digit',      // "10"
-            month: 'long',       // "avril"
-            year: 'numeric',     // "2025"
-            hour: '2-digit',     // "14"
-            minute: '2-digit',   // "05"
-            hour12: false        // format 24h
-        });
-    }
-
-    return "Date invalide";
-});
+let date_string = computed(() => { return get_date_string(props.date)});
 
 let preview = computed(() => {
     return props.contenu.substring(0, 50);

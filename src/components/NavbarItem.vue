@@ -1,6 +1,7 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
 import { ref, onMounted } from 'vue';
+import { auth } from '@/firebase'
 // import { useStore } from '@/composables/getDiscussions';
 // import { getReplies } from '@/composables/getReplies';
 import SearchBar from './SearchBar.vue';
@@ -12,14 +13,16 @@ const props = defineProps({
     }
 });
 
-const UserType = Object.freeze({
-    ADMIN: 1,
-    USER: 2,
-    GUEST: 3,
-});
-
-const type = ref(3); 
-
+let user_connected = ref(false);
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // User is logged in; you can fetch additional data if needed.
+            user_connected.value = true;
+        } else {
+            // No user is logged in.
+            user_connected.value = false;
+        }
+    });
 // pour recuperer les discussions
 // const { discussions, fetchDiscussions } = useStore();
 // onMounted(() => {
@@ -59,7 +62,7 @@ const type = ref(3);
     </div>
     <search-bar class="my-2" />
     <div>
-      <div v-if="type === UserType.ADMIN || type === UserType.USER">
+      <div v-if="user_connected">
         <button class="btn btn-primary rounded-pill">
           <router-link :to="`/profile/${username}`" class="nav-link active" aria-current="page">
             <span class="fw-bold text-white">Profile</span>
