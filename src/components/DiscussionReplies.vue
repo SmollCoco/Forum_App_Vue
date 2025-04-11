@@ -20,7 +20,9 @@ onMounted(async () => {
 
 <template>
     <div class="mx-3 p-1 border-left">
-        <ReplyItem />
+        <div v-for="(reply, index) of replies" :key="index">
+            <ReplyItem v-bind="reply"/>
+        </div>
     </div>
 </template>
 

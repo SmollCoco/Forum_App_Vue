@@ -3,6 +3,7 @@
 import { ref, computed } from 'vue';
 import { get_date_string } from '../composables/dateString'
 import ReplyModal from './ReplyModal.vue';
+import { viewDepthKey } from 'vue-router';
 let show_response = ref(false);
 const props = defineProps({
     auteur: {
@@ -23,6 +24,16 @@ const props = defineProps({
     parent: {
         type: String,
         required: true,
+    },
+    depth: {
+        type: Number,
+        required: true,
+        default: 0
+    }, 
+    parentName: {
+        type: String,
+        required: true,
+        default: "Parent",
     }
 });
 
@@ -30,8 +41,8 @@ let date_string = computed(() => { return get_date_string(props.date) });
 </script>
 
 <template>
-    <div class="bg-white p-2 r-link">
-        <div class="w-100 d-flex gap-1 flex-column rounded">
+    <div class="bg-white p-2 r-link" >
+        <div class="d-flex gap-1 flex-column rounded" :class="(depth >= 1) ? 'ms-lg-4': ''">
             <!--Header containing the author, the topics and the date-->
             <div class="d-flex align-items-center gap-1 z-1">
                 <router-link :to="`/profile/${auteur}`" class="d-flex gap-1 text-decoration-none align-items-center">
@@ -41,12 +52,12 @@ let date_string = computed(() => { return get_date_string(props.date) });
                 </router-link>
                 <span style="color: gray; font-size: small;"> | {{ date_string }} | </span>
             </div>
-            <div> {{ contenu }} </div>
+            <div class="ms-lg-2 mb-2"> <router-link :to="`/profile/${parentName}`"> @{{ parentName }} </router-link> {{ contenu }} </div>
+            <div class="btn rounded-pill fw-bold fx-w" @click="show_response = !show_response">
+                Reply
+            </div>
+            <reply-modal v-if="show_response" :to_whom="auteur" :parent_id="id" @cancel="show_response = false" />
         </div>
-        <div class="btn rounded-pill fw-bold fx-w" @click="show_response = !show_response">
-            Reply
-        </div>
-        <reply-modal v-if="show_response" :to_whom="auteur" :parent_id="id" @cancel="show_response = false" />
     </div>
 </template>
 
@@ -63,6 +74,7 @@ let date_string = computed(() => { return get_date_string(props.date) });
 
 .div-link{
     font-size: 14px;
+    color: black;
 }
 
 .div-link:hover {
