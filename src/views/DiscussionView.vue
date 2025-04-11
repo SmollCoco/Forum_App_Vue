@@ -5,6 +5,8 @@ import DiscussionDetail from '../components/DiscussionDetail.vue';
 </script>
 
 <template>
-    <NavbarItem />
-    <DiscussionDetail class="mt-5" />
+    <div class="d-flex flex-column">
+        <NavbarItem class="z-2"/>
+        <DiscussionDetail class="mt-5" />
+    </div>
 </template>
