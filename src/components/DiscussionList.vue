@@ -1,14 +1,28 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,computed } from 'vue';
 import DiscussionItem from './DiscussionItem.vue'
 import { useStore } from '@/composables/getDiscussions';
+import { getTopic_Disc } from '@/composables/getTopic_Disc';
 
+const props=defineProps({
+  filtred:{
+    type:Array,
+    required:true,
+    default:()=>[],
+  }
+})
 const { discussions, fetchDiscussions } = useStore();
 onMounted(() => {
   fetchDiscussions().then(() => {
     
     console.log('discussions1', discussions.value);
   });
+});
+
+const filteredDiscussions=ref([]);
+onMounted(async () => {
+  filteredDiscussions.value = await getTopic_Disc("", filtred); // example usage
+  console.log('Filtered discussions:', filteredDiscussions.value);
 });
 </script>
 

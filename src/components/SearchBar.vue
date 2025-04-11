@@ -30,11 +30,11 @@ const matchedTopics = computed(() => {
 </script>
 
 <template>
-  <div class="mx-3 rounded-1 bg-white z-1 search-bar-container border-bottom" style="width: 50%;">
+  <div  class="mx-3 rounded-1 bg-white z-1 search-bar-container border-bottom" style="width: 50%;">
     <input class="form-control me-2 rounded-pill border-0" type="text" placeholder="Search MAYY"
       v-model="search_field" />
 
-    <div class="shadow-lg rounded mt-2 p-2 ">
+    <div v-show="search_field"  class="shadow-lg rounded mt-2 p-2 suggestion-item" >
       <div v-if="matchedAuthors.length">
         <h6 class="text-muted px-2 " >Auteurs</h6>
         <SearchSuggestionItem
@@ -75,6 +75,10 @@ input[type="text"]:focus {
   background-color: white;
   color: black;
   font-weight: 500;
+}
+.suggestion-item {
+    max-height: 300px; 
+    overflow-y: auto; 
 }
 
 </style>
