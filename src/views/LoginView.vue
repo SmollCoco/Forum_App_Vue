@@ -46,3 +46,20 @@ const handleLogin = async () => {
     }
 }
 </script>
+
+<style scoped>
+form{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 10% auto;
+    padding: 20px;
+    gap: 50px;
+    border: 2px solid #ccc;
+}
+.formitem{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+</style>
