@@ -21,16 +21,16 @@ const props = defineProps({
 });
 let author = ref("User_connected")
 let reply_text = ref('')
-let user_connected = ref(true);
-// auth.onAuthStateChanged(user => {
-//     if (user) {
-//         // User is logged in; you can fetch additional data if needed.
-//         user_connected.value = true;
-//     } else {
-//         // No user is logged in.
-//         user_connected.value = false;
-//     }
-// });
+let user_connected = ref(false);
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // User is logged in; you can fetch additional data if needed.
+        user_connected.value = true;
+    } else {
+        // No user is logged in.
+        user_connected.value = false;
+    }
+});
 </script>
 
 <template>
