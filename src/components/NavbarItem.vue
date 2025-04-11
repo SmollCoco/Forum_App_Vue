@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <script setup>
 import { ref, onMounted } from 'vue';
 // import { useStore } from '@/composables/getDiscussions';
@@ -5,16 +6,16 @@ import { ref, onMounted } from 'vue';
 import SearchBar from './SearchBar.vue';
 
 const props = defineProps({
-  username: {
-    type: String,
-    default: ''
-  }
+    username: {
+        type: String,
+        default: "",
+    }
 });
 
 const UserType = Object.freeze({
-  ADMIN: 1,
-  USER: 2,
-  GUEST: 3
+    ADMIN: 1,
+    USER: 2,
+    GUEST: 3,
 });
 
 const type = ref(3); 

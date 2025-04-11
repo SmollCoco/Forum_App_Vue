@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <script setup>
 import { ref, onMounted,computed } from 'vue';
 import DiscussionItem from './DiscussionItem.vue'
@@ -34,7 +35,6 @@ onMounted(async () => {
                 <div v-if="discussion.parent==null">
                     <DiscussionItem v-bind="discussion" />
                     <hr class="border-1 m-0" />
-
                 </div>
         
       </div>
