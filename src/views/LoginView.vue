@@ -41,10 +41,26 @@ const handleLogin = async () => {
         }
 
     } catch (loginError) {
+        markInvalidInputs()
         console.error('Login failed:', loginError)
         alert('Login failed. Please check your credentials.')
     }
 }
+// const isValidEmail = (email) => {
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+//     return emailRegex.test(email)
+// }
+
+const markInvalidInputs = () => {
+    const emailInput = document.getElementById('email')
+    const passwordInput = document.getElementById('password')
+    emailInput.style.borderColor = 'red'
+    passwordInput.style.borderColor = 'red'
+    emailInput.value = ''
+    passwordInput.value = ''
+}
+
+
 </script>
 
 <style scoped>
