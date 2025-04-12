@@ -1,10 +1,14 @@
-import { auth } from '@/firebase';
-auth.onAuthStateChanged(user => {
-  if (user) {
-      // User is logged in; you can fetch additional data if needed.
-      return true
-  } else {
-      // No user is logged in.
-      return false
-  }
-});
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/firebase";
+
+export function authStateListener(callback) {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            console.log("User logged in");
+            callback(true);
+        } else {
+            console.log("User not logged in");
+            callback(false);
+        }
+    });
+}
