@@ -26,7 +26,9 @@
                             class="profile-pic"
                         />
                         <div class="profile-info">
-                            <h2 class="profile-name">{{ userInfo.name }}</h2>
+                            <h2 class="profile-name">
+                                {{ userInfo.uid }}
+                            </h2>
                             <p class="profile-email">{{ userInfo.email }}</p>
                         </div>
                     </div>
@@ -278,7 +280,7 @@ const router = useRouter();
 watch(userId, async (newVal) => {
     if (newVal) {
         try {
-            loading.value = true; // Start loading
+            loading.value = true;
             const user = await getUserInfo(newVal);
             userInfo.value = user;
 
@@ -286,16 +288,17 @@ watch(userId, async (newVal) => {
             await fetchDiscussions();
             discussions.value = allDiscussions.value.filter(
                 (discussion) =>
-                    userInfo.value && discussion.auteur === userInfo.value.name
+                    userInfo.value &&
+                    discussion.auteur === userInfo.value.uid // Fixed to use `username`
             );
         } catch (error) {
             console.error("Error fetching user info or discussions:", error);
         } finally {
-            loading.value = false; // Stop loading
+            loading.value = false;
         }
     } else {
         userInfo.value = null;
-        loading.value = false; // Stop loading if no user
+        loading.value = false;
         discussions.value = [];
     }
 });

@@ -1,4 +1,3 @@
-// src/composables/useUserInfo.js
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -7,9 +6,9 @@ import { doc, getDoc } from "firebase/firestore";
  * @param {string} username - The username to search for.
  * @returns {Promise<Object|null>} - A JSON object containing user info or null if not found.
  */
-export async function getUserInfo(username) {
+export async function getUserByUsername(username) {
     try {
-        const userDocRef = doc(db, "users", username); // Use username as the document ID
+        const userDocRef = doc(db, "users", username);
         const userSnapshot = await getDoc(userDocRef);
 
         if (userSnapshot.exists()) {
@@ -19,7 +18,7 @@ export async function getUserInfo(username) {
             return null;
         }
     } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error("Error fetching user by username:", error);
         throw error;
     }
 }

@@ -1,15 +1,29 @@
-// src/composables/userRegistration.js
-import { auth, db } from "@/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db, auth } from "@/firebase";
+import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 /**
- * registerUser creates both the Firebase Auth user and a Firestore record
- * for that user. If your Firestore rules forbid changing isAdmin, you can
- * still pass "isAdmin: false" on creation.
+ * Registers a new user and ensures the username is unique.
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @param {string} username - The user's desired username.
+ * @param {string} pfp - The user's profile picture URL.
+ * @returns {Promise<Object>} - The created user object.
+ * @throws {Error} - If the username is not unique or other errors occur.
  */
-export async function registerUser(email, password, name, pfp) {
+export async function registerUser(email, password, username, pfp) {
     try {
+        // Check if the username is unique
+        const userDocRef = doc(db, "users", username);
+        const userSnapshot = await getDoc(userDocRef);
+
+        if (userSnapshot.exists()) {
+            throw new Error(
+                "This username is already taken. Please choose a different one."
+            );
+        }
+
+        // Create the user in Firebase Authentication
         const userCredential = await createUserWithEmailAndPassword(
             auth,
             email,
@@ -17,9 +31,13 @@ export async function registerUser(email, password, name, pfp) {
         );
         const user = userCredential.user;
 
-        await setDoc(doc(db, "users", user.uid), {
+        // Set the displayName in Firebase Authentication
+        await updateProfile(user, { displayName: username });
+
+        // Add the user to the Firestore database with `username` as the document ID
+        await setDoc(userDocRef, {
             email: email,
-            name: name,
+            uid: user.uid,
             pfp: pfp,
             isAdmin: false,
             createdAt: serverTimestamp(),
@@ -27,21 +45,7 @@ export async function registerUser(email, password, name, pfp) {
 
         return user;
     } catch (error) {
-        console.error("Error in registerUser:", error.code, error.message);
-        if (error.code === "auth/email-already-in-use") {
-            throw new Error(
-                "This email is already in use. Please use a different email."
-            );
-        } else if (error.code === "auth/weak-password") {
-            throw new Error(
-                "The password is too weak. Please use a stronger password."
-            );
-        } else if (error.code === "auth/invalid-email") {
-            throw new Error(
-                "The email address is invalid. Please enter a valid email."
-            );
-        } else {
-            throw new Error("Failed to register. Please try again.");
-        }
+        console.error("Error in registerUser:", error);
+        throw error;
     }
 }

@@ -7,70 +7,73 @@
         </div>
         <form @submit.prevent="handleLogin">
             <div class="formitem">
-                <label for="email">
-                    Email:
-                </label>
+                <label for="email"> Email: </label>
                 <input type="email" id="email" v-model="email" required />
             </div>
             <div class="formitem">
-                <label for="password">
-                    Password:
-                </label>
+                <label for="password"> Password: </label>
                 <div class="password-container">
-                    <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password" required />
-                    <button type="button" @click="togglePasswordVisibility" class="toggle-password">
-                        {{ showPassword ? 'Hide' : 'Show' }}
+                    <input
+                        :type="showPassword ? 'text' : 'password'"
+                        id="password"
+                        v-model="password"
+                        required
+                    />
+                    <button
+                        type="button"
+                        @click="togglePasswordVisibility"
+                        class="toggle-password"
+                    >
+                        {{ showPassword ? "Hide" : "Show" }}
                     </button>
                 </div>
             </div>
             <button type="submit">Login</button>
         </form>
-
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { loginUser } from '@/composables/userLogin'
-import { useRouter } from 'vue-router'
+import { ref } from "vue";
+import { loginUser } from "@/composables/userLogin";
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
+const email = ref("");
+const password = ref("");
+const showPassword = ref(false);
 
 const handleLogin = async () => {
     try {
-        await loginUser(email.value, password.value)
-        alert('Login successful!')
+        await loginUser(email.value, password.value);
+        alert("Login successful!");
 
         try {
-            await router.push('/')
+            await router.push("/");
         } catch (navError) {
-            console.error('Navigation failed:', navError)
-            alert('Redirect failed, please try manual navigation')
+            console.error("Navigation failed:", navError);
+            alert("Redirect failed, please try manual navigation");
         }
-
     } catch (loginError) {
-        markInvalidInputs()
-        console.error('Login failed:', loginError)
-        alert('Login failed. Please check your credentials.')
+        markInvalidInputs();
+        console.error("Login failed:", loginError);
+        alert("Login failed. Please check your credentials.");
     }
-}
+};
 
 const togglePasswordVisibility = () => {
-    showPassword.value = !showPassword.value
-}
+    showPassword.value = !showPassword.value;
+};
 
 const markInvalidInputs = () => {
-    const emailInput = document.getElementById('email')
-    const passwordInput = document.getElementById('password')
-    emailInput.style.borderColor = 'red'
-    passwordInput.style.borderColor = 'red'
-    emailInput.value = ''
-    passwordInput.value = ''
-}
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    emailInput.style.borderColor = "red";
+    passwordInput.style.borderColor = "red";
+    emailInput.value = "";
+    passwordInput.value = "";
+};
 </script>
 
 <style scoped>

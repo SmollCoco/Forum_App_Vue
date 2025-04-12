@@ -19,14 +19,22 @@
                 <input v-model="confirmPassword" type="password" required />
             </div>
             <div>
-                <label>Name</label>
-                <input v-model="name" type="text" />
+                <label>Username</label>
+                <input v-model="username" type="text" />
             </div>
             <div>
                 <label>Profile Picture</label>
-                <input type="file" @change="handleFileUpload" :disabled="isUploading" />
+                <input
+                    type="file"
+                    @change="handleFileUpload"
+                    :disabled="isUploading"
+                />
                 <span v-if="isUploading">Uploading...</span>
-                <img :src="profilePicture || DEFAULT_PROFILE_PICTURE" alt="Profile Preview" class="profile-preview" />
+                <img
+                    :src="profilePicture || DEFAULT_PROFILE_PICTURE"
+                    alt="Profile Preview"
+                    class="profile-preview"
+                />
             </div>
             <button type="submit" :disabled="loading">
                 {{ loading ? "Creating Account..." : "Create Account" }}
@@ -45,7 +53,7 @@ import { uploadToGitHub } from "@/composables/uploadToGitHub";
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const name = ref("");
+const username = ref("");
 const profilePicture = ref(null);
 const errorMessage = ref("");
 const loading = ref(false);
@@ -110,10 +118,10 @@ const handleRegister = async () => {
         return;
     }
 
-    const nameRegex = /^[^\d]*$/;
-    if (!nameRegex.test(name.value)) {
+    const usernameRegex = /^[a-zA-Z0-9._]+$/;
+    if (!usernameRegex.test(username.value)) {
         errorMessage.value =
-            "Name should only contain letters. Please remove any numbers or special characters.";
+            "Username should only contain letters, numbers, dots, or underscores.";
         loading.value = false;
         return;
     }
@@ -121,7 +129,7 @@ const handleRegister = async () => {
     console.log("Registering user with:", {
         email: email.value,
         password: password.value,
-        name: name.value,
+        username: username.value,
         profilePicture: finalProfilePicture,
     });
 
@@ -129,12 +137,12 @@ const handleRegister = async () => {
         const user = await registerUser(
             email.value,
             password.value,
-            name.value,
+            username.value,
             finalProfilePicture
         );
         console.log("User created:", user);
         alert("Account created successfully!");
-        router.push(`/profile/${user.uid}`);
+        router.push(`/profile/${username.value}`);
     } catch (err) {
         console.error("Registration error:", err);
         errorMessage.value =
