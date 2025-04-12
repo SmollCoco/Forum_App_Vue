@@ -1,5 +1,10 @@
 <template>
     <div id="register">
+        <div id="header">
+            <router-link to="/">
+                <img src="../assets/logo.png" width="120px" alt="Logo" />
+            </router-link>
+        </div>
         <form @submit.prevent="handleRegister">
             <div>
                 <label>Email</label>
@@ -19,22 +24,9 @@
             </div>
             <div>
                 <label>Profile Picture</label>
-                <input
-                    type="file"
-                    @change="handleFileUpload"
-                    :disabled="isUploading"
-                />
+                <input type="file" @change="handleFileUpload" :disabled="isUploading" />
                 <span v-if="isUploading">Uploading...</span>
-                <img
-                    :src="profilePicture || DEFAULT_PROFILE_PICTURE"
-                    alt="Profile Preview"
-                    style="
-                        width: 100px;
-                        height: 100px;
-                        border-radius: 50%;
-                        margin-top: 10px;
-                    "
-                />
+                <img :src="profilePicture || DEFAULT_PROFILE_PICTURE" alt="Profile Preview" class="profile-preview" />
             </div>
             <button type="submit" :disabled="loading">
                 {{ loading ? "Creating Account..." : "Create Account" }}
@@ -154,7 +146,73 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
+form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 2% auto;
+    padding: 20px;
+    gap: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: #25699f;
+    box-shadow: 0 0 5px rgba(37, 105, 159, 0.5);
+}
+
+button {
+    padding: 10px;
+    background-color: #25699f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #858d95;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.profile-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top: 10px;
+    border: 2px solid #ccc;
+}
+
 .error {
     color: red;
+    font-size: 14px;
+    text-align: center;
 }
 </style>

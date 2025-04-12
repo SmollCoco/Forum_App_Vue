@@ -5,6 +5,7 @@
                 <img src="../assets/logo.png" width="120px" alt="Logo" />
             </router-link>
         </div>
+        <!-- <NavbarItem /> -->
         <div id="body">
             <div class="profile-container">
                 <div v-if="loading" class="loading-container">
@@ -12,25 +13,12 @@
                 </div>
                 <div v-else-if="userId" class="profile-card">
                     <div class="profile-header">
-                        <img
-                            v-if="userInfo && userInfo.pfp"
-                            :src="userInfo.pfp"
-                            alt="Profile Picture"
-                            class="profile-pic"
-                        />
-                        <img
-                            v-else
-                            src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
-                            alt="Default Profile Picture"
-                            class="profile-pic"
-                        />
-                        <div class="profile-info" v-if="userInfo">
-                            <h2 class="profile-name">
-                                {{ userInfo.name || "No Name Provided" }}
-                            </h2>
-                            <p class="profile-email">
-                                {{ userInfo.email || "No Email Provided" }}
-                            </p>
+                        <img v-if="userInfo && userInfo.pfp" :src="userInfo.pfp" alt="Profile Picture"
+                            class="profile-pic" />
+                        <img v-else src="../assets/user.png" alt="Default Profile Picture" class="profile-pic" />
+                        <div class="profile-info">
+                            <h2 class="profile-name">{{ userInfo.name }}</h2>
+                            <p class="profile-email">{{ userInfo.email }}</p>
                         </div>
                     </div>
                     <div class="profile-body">
@@ -99,6 +87,7 @@
     height: 100vh;
     /* background-color: #f6f8fa; */
 }
+
 #body {
     font-family: Arial, sans-serif;
     /* background-color: #f6f8fa; */
@@ -231,6 +220,7 @@
     height: 100%;
     padding-left: 5%;
 }
+
 .user-discussions {
     /* margin-top: 20px; */
     height: 100%;
@@ -248,6 +238,7 @@
     padding: 10px;
     border: 1px solid #d0d7de;
     /* border-radius: 5px; */
+
 
     width: 100%;
 }
