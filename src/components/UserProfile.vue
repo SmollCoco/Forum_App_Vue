@@ -13,9 +13,18 @@
                 </div>
                 <div v-else-if="userId" class="profile-card">
                     <div class="profile-header">
-                        <img v-if="userInfo && userInfo.pfp" :src="userInfo.pfp" alt="Profile Picture"
-                            class="profile-pic" />
-                        <img v-else src="../assets/user.png" alt="Default Profile Picture" class="profile-pic" />
+                        <img
+                            v-if="userInfo && userInfo.pfp"
+                            :src="userInfo.pfp"
+                            alt="Profile Picture"
+                            class="profile-pic"
+                        />
+                        <img
+                            v-else
+                            src="../assets/user.png"
+                            alt="Default Profile Picture"
+                            class="profile-pic"
+                        />
                         <div class="profile-info">
                             <h2 class="profile-name">{{ userInfo.name }}</h2>
                             <p class="profile-email">{{ userInfo.email }}</p>
@@ -238,7 +247,6 @@
     padding: 10px;
     border: 1px solid #d0d7de;
     /* border-radius: 5px; */
-
 
     width: 100%;
 }
