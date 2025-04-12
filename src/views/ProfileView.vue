@@ -26,7 +26,7 @@
                         />
                         <div class="profile-info">
                             <h2 class="profile-name">
-                                {{ userInfo.uid }}
+                                {{ username }}
                             </h2>
                             <p class="profile-email">{{ userInfo.email }}</p>
                         </div>
@@ -97,7 +97,7 @@ import logout from "@/composables/userLogout";
 
 const route = useRoute();
 const router = useRouter();
-const username = route.params.uid; // Get username from route params
+const username = route.params.username; // Get username from route params
 const userInfo = ref(null);
 const discussions = ref([]);
 const loading = ref(true);
@@ -111,7 +111,7 @@ onMounted(async () => {
 
         // Fetch user info by username
         userInfo.value = await getUserInfo(username);
-
+        console.log(userInfo.value);
         if (!userInfo.value) {
             alert("User not found.");
             router.push("/"); // Redirect to home if user not found

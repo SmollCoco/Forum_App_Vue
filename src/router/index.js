@@ -34,9 +34,9 @@ const router = createRouter({
       component: ProfileView
     },
     {
-            path: "/profile/edit",
-            name: "EditProfile",
-            component: EditProfileView,
+      path: "/profile/edit",
+      name: "EditProfile",
+      component: EditProfileView,
     },
     {
       path: '/discussion/:id',
@@ -91,3 +91,4 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+ 
