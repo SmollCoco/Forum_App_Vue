@@ -1,67 +1,108 @@
 <template>
-    <div id="body">
+    <div id="all">
         <div id="header">
             <router-link to="/">
                 <img src="../assets/logo.png" width="120px" alt="Logo" />
             </router-link>
         </div>
-        <div class="profile-container">
-            <div v-if="userId" class="profile-card">
-                <div class="profile-header">
-                    <img v-if="userInfo && userInfo.pfp" :src="userInfo.pfp" alt="Profile Picture"
-                        class="profile-pic" />
-                    <img v-else src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
-                        alt="Default Profile Picture" class="profile-pic" />
-                    <div class="profile-info">
-                        <h2 class="profile-name">{{ userInfo.name }}</h2>
-                        <p class="profile-email">{{ userInfo.email }}</p>
+        <div id="body">
+
+            <div class="profile-container">
+                <div v-if="userId" class="profile-card">
+                    <div class="profile-header">
+                        <img v-if="userInfo && userInfo.pfp" :src="userInfo.pfp" alt="Profile Picture"
+                            class="profile-pic" />
+                        <img v-else
+                            src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+                            alt="Default Profile Picture" class="profile-pic" />
+                        <div class="profile-info">
+                            <h2 class="profile-name">{{ userInfo.name }}</h2>
+                            <p class="profile-email">{{ userInfo.email }}</p>
+                        </div>
                     </div>
+                    <div class="profile-body">
+                        <p>
+                            <strong>Status:</strong>
+                            {{ isLoggedIn ? "Logged In" : "Logged Out" }}
+                        </p>
+                        <div class="profile-actions">
+                            <button class="btn btn-danger" @click="handleLogout">Logout</button>
+                            <button class="btn btn-edit">Edit profile</button>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="profile-body">
-                    <p>
-                        <strong>Status:</strong>
-                        {{ isLoggedIn ? "Logged In" : "Logged Out" }}
-                    </p>
-                    <div class="profile-actions">
-                        <button class="btn btn-danger" @click="handleLogout">Logout</button>
-                        <button class="btn btn-edit">Edit profile</button>
-                    </div>
+                <div v-else class="not-logged-in">
+                    <p>You are not logged in.</p>
+                    <router-link to="/login" class="btn btn-primary">Login</router-link>
                 </div>
             </div>
-            <div v-else class="not-logged-in">
-                <p>You are not logged in.</p>
-                <router-link to="/login" class="btn btn-primary">Login</router-link>
+            <div id="discussions-container">
+                <div class="user-discussions">
+                    <!-- <h2>Your Discussions</h2> -->
+                    <ul v-if="discussions.length === 0">
+                        <li>No discussions found.</li>
+                    </ul>
+                    <ul>
+                        <li v-for="discussion in discussions" :key="discussion.id">
+                            <div v-if="discussion.titre" class="discussion-item">
+                                <router-link :to="`/discussion/${discussion.id}`">
+                                    <strong>{{ discussion.titre }}</strong>
+                                </router-link>
+                                <p>{{ discussion.contenu }}</p>
+                            </div>
+
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+#all {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    /* background-color: #f6f8fa; */
+}
 #body {
     font-family: Arial, sans-serif;
-    background-color: #f6f8fa;
+    /* background-color: #f6f8fa; */
     padding: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 #header {
     display: flex;
-    margin-bottom: 20px;
+    /* justify-content: center; */
+    /* margin-bottom: 20px; */
+    height: 20%;
+
 }
 
 .profile-container {
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    /* justify-content: center; */
+    /* align-items:baseline; */
     min-height: 80vh;
+    width: max-content;
+    height: 100%;
 }
 
 .profile-card {
-    /* background-color: #ffffff; */
+    /* background-color: #f1ebeb; */
     border: 1px solid #d0d7de;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: 30%;
+    width: max-content;
     padding: 20px;
+    align-self: flex-start;
+    height: 100%;
 }
 
 .profile-header {
@@ -71,7 +112,7 @@
 }
 
 .profile-pic {
-    width: 100px;
+    width: 70%;
     height: 100px;
     border-radius: 50%;
     border: 2px solid #d0d7de;
@@ -148,47 +189,90 @@
 .not-logged-in {
     text-align: center;
 }
+
+/* styles for the discussions list */
+#discussions-container {
+    display: flex;
+    width: 80%;
+    height: 100%;
+    padding-left: 5%;
+}
+.user-discussions {
+    /* margin-top: 20px; */
+    height: 100%;
+    width: 100%;
+    /* background-color: #f9f9f9; */
+}
+
+.user-discussions ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.discussion-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #d0d7de;
+    /* border-radius: 5px; */
+    
+    width: 100%;
+}
+
+/* .discussion-item :hover {
+    background-color: #25699f;
+} */
 </style>
 <script setup>
-import { ref, watch } from 'vue'
-import { useCurrentUserId } from "@/composables/useCurrentUserId.js"
-import { getUserInfo } from "@/composables/useUserInfo.js"
-import { authStateListener } from "@/composables/authStateListener.js"
-import logout from "@/composables/userLogout.js"
-import { useRouter } from "vue-router"
+import { ref, watch, reactive, onMounted } from 'vue';
+import { useCurrentUserId } from "@/composables/useCurrentUserId.js";
+import { getUserInfo } from "@/composables/useUserInfo.js";
+import { authStateListener } from "@/composables/authStateListener.js";
+import { useStore } from "@/composables/getDiscussions.js";
+import logout from "@/composables/userLogout.js";
+import { useRouter } from "vue-router";
 
-const { currentUserId } = useCurrentUserId()
-const userId = currentUserId
-const userInfo = ref(null)
-const isLoggedIn = ref(false)
-const router = useRouter()
+const { currentUserId } = useCurrentUserId();
+const userId = currentUserId;
+const userInfo = ref(null);
+const isLoggedIn = ref(false);
+const discussions = ref([]); // Store discussions of the logged-in user
+const router = useRouter();
+
+const { discussions: allDiscussions, fetchDiscussions } = useStore();
 
 // 1) Watch userId
 watch(userId, async (newVal) => {
     if (newVal) {
         try {
-            const user = await getUserInfo(newVal)
-            userInfo.value = user
+            const user = await getUserInfo(newVal);
+            userInfo.value = user;
+
+            // Fetch discussions of the logged-in user
+            await fetchDiscussions();
+            discussions.value = allDiscussions.value.filter(
+                (discussion) => discussion.auteur === userInfo.value.name
+            );
         } catch (error) {
-            console.error("Error fetching user info:", error)
+            console.error("Error fetching user info or discussions:", error);
         }
     } else {
-        userInfo.value = null
+        userInfo.value = null;
+        discussions.value = [];
     }
-})
+});
 
 // 2) Listen to auth changes for isLoggedIn
 authStateListener((status) => {
-    isLoggedIn.value = status
-})
+    isLoggedIn.value = status;
+});
 
 // 3) Handle logout
 const handleLogout = async () => {
     try {
-        await logout()
-        router.push("/")
+        await logout();
+        router.push("/");
     } catch (error) {
-        console.error("Logout failed:", error)
+        console.error("Logout failed:", error);
     }
-}
+};
 </script>
