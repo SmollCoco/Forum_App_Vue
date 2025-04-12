@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 // import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBSdlbM8mjdmAMEg8R6cSTP1OpvenMCGL8",
-  authDomain: "forum-app-vue.firebaseapp.com",
-  projectId: "forum-app-vue",
-  storageBucket: "forum-app-vue.firebasestorage.app",
-  messagingSenderId: "546066211595",
-  appId: "1:546066211595:web:085821682db29d29ae380e"
+    apiKey: "AIzaSyBSdlbM8mjdmAMEg8R6cSTP1OpvenMCGL8",
+    authDomain: "forum-app-vue.firebaseapp.com",
+    projectId: "forum-app-vue",
+    storageBucket: "forum-app-vue.firebasestorage.app",
+    messagingSenderId: "546066211595",
+    appId: "1:546066211595:web:085821682db29d29ae380e",
 };
 
 // Initialize Firebase
