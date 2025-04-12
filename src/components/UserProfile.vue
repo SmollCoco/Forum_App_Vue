@@ -6,15 +6,30 @@
             </router-link>
         </div>
         <div class="profile-container">
-            <div v-if="userId" class="profile-card">
+            <div v-if="loading" class="loading-container">
+                <p>Loading profile...</p>
+            </div>
+            <div v-else-if="userId" class="profile-card">
                 <div class="profile-header">
-                    <img v-if="userInfo && userInfo.pfp" :src="userInfo.pfp" alt="Profile Picture"
-                        class="profile-pic" />
-                    <img v-else src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
-                        alt="Default Profile Picture" class="profile-pic" />
-                    <div class="profile-info">
-                        <h2 class="profile-name">{{ userInfo.name }}</h2>
-                        <p class="profile-email">{{ userInfo.email }}</p>
+                    <img
+                        v-if="userInfo && userInfo.pfp"
+                        :src="userInfo.pfp"
+                        alt="Profile Picture"
+                        class="profile-pic"
+                    />
+                    <img
+                        v-else
+                        src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+                        alt="Default Profile Picture"
+                        class="profile-pic"
+                    />
+                    <div class="profile-info" v-if="userInfo">
+                        <h2 class="profile-name">
+                            {{ userInfo.name || "No Name Provided" }}
+                        </h2>
+                        <p class="profile-email">
+                            {{ userInfo.email || "No Email Provided" }}
+                        </p>
                     </div>
                 </div>
                 <div class="profile-body">
@@ -23,14 +38,23 @@
                         {{ isLoggedIn ? "Logged In" : "Logged Out" }}
                     </p>
                     <div class="profile-actions">
-                        <button class="btn btn-danger" @click="handleLogout">Logout</button>
-                        <button class="btn btn-edit">Edit profile</button>
+                        <button class="btn btn-danger" @click="handleLogout">
+                            Logout
+                        </button>
+                        <button
+                            class="btn btn-edit"
+                            @click="navigateToEditProfile"
+                        >
+                            Edit Profile
+                        </button>
                     </div>
                 </div>
             </div>
             <div v-else class="not-logged-in">
                 <p>You are not logged in.</p>
-                <router-link to="/login" class="btn btn-primary">Login</router-link>
+                <router-link to="/login" class="btn btn-primary"
+                    >Login</router-link
+                >
             </div>
         </div>
     </div>
@@ -55,8 +79,13 @@
     min-height: 80vh;
 }
 
+.loading-container {
+    text-align: center;
+    font-size: 18px;
+    color: #57606a;
+}
+
 .profile-card {
-    /* background-color: #ffffff; */
     border: 1px solid #d0d7de;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -150,45 +179,59 @@
 }
 </style>
 <script setup>
-import { ref, watch } from 'vue'
-import { useCurrentUserId } from "@/composables/useCurrentUserId.js"
-import { getUserInfo } from "@/composables/useUserInfo.js"
-import { authStateListener } from "@/composables/authStateListener.js"
-import logout from "@/composables/userLogout.js"
-import { useRouter } from "vue-router"
+import { ref, watch } from "vue";
+import { useCurrentUserId } from "@/composables/useCurrentUserId.js";
+import { getUserInfo } from "@/composables/useUserInfo.js";
+import { authStateListener } from "@/composables/authStateListener.js";
+import logout from "@/composables/userLogout.js";
+import { useRouter } from "vue-router";
 
-const { currentUserId } = useCurrentUserId()
-const userId = currentUserId
-const userInfo = ref(null)
-const isLoggedIn = ref(false)
-const router = useRouter()
+const { currentUserId } = useCurrentUserId();
+const userId = currentUserId;
+const userInfo = ref(null);
+const isLoggedIn = ref(false);
+const loading = ref(true); // Add loading state
+const router = useRouter();
 
-// 1) Watch userId
+// Watch userId and fetch user info
 watch(userId, async (newVal) => {
     if (newVal) {
         try {
-            const user = await getUserInfo(newVal)
-            userInfo.value = user
+            loading.value = true; // Start loading
+            const user = await getUserInfo(newVal);
+            userInfo.value = user;
         } catch (error) {
-            console.error("Error fetching user info:", error)
+            console.error("Error fetching user info:", error);
+        } finally {
+            loading.value = false; // Stop loading
         }
     } else {
-        userInfo.value = null
+        userInfo.value = null;
+        loading.value = false; // Stop loading if no user
     }
-})
+});
 
-// 2) Listen to auth changes for isLoggedIn
+// Listen to auth changes for isLoggedIn
 authStateListener((status) => {
-    isLoggedIn.value = status
-})
+    isLoggedIn.value = status;
+});
 
-// 3) Handle logout
+// Handle logout
 const handleLogout = async () => {
     try {
-        await logout()
-        router.push("/")
+        await logout();
+        router.push("/");
     } catch (error) {
-        console.error("Logout failed:", error)
+        console.error("Logout failed:", error);
     }
-}
+};
+
+const navigateToEditProfile = () => {
+    try {
+        router.push("/profile/edit");
+    } catch (error) {
+        console.error("Navigation to Edit Profile failed:", error);
+        alert("Failed to navigate to Edit Profile. Please try again.");
+    }
+};
 </script>

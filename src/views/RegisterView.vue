@@ -143,7 +143,7 @@ const handleRegister = async () => {
         );
         console.log("User created:", user);
         alert("Account created successfully!");
-        router.push("/");
+        router.push(`/profile/${user.uid}`);
     } catch (err) {
         console.error("Registration error:", err);
         errorMessage.value =
