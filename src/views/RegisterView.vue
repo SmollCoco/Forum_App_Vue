@@ -1,7 +1,5 @@
 <template>
     <div id="register">
-        <!-- <h2>Register</h2> -->
-         
         <form @submit.prevent="handleRegister">
             <div>
                 <label>Email</label>
@@ -44,12 +42,24 @@ const router = useRouter()
 
 const handleRegister = async () => {
     errorMessage.value = ''
+
+    // Validate passwords match
+    if (password.value !== confirmPassword.value) {
+        errorMessage.value = 'Passwords do not match.'
+        return
+    }
+
+    // Validate name does not contain numbers
+    const nameRegex = /^[^\d]*$/
+    if (!nameRegex.test(name.value)) {
+        errorMessage.value = 'Name should not contain numbers.'
+        return
+    }
+
     try {
         const user = await registerUser(email.value, password.value, name.value, pfp.value)
         console.log('User created:', user)
         alert('Account created successfully!')
-        // Optionally, you can log in the user automatically after registration
-        // After creation, maybe redirect to your "Home" or "Profile" page
         router.push('/')
     } catch (err) {
         errorMessage.value = err.message
