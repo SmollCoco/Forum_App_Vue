@@ -17,6 +17,11 @@ const props = defineProps({
     parent_id: {
         type: String,
         required: true,
+    },
+    parent_depth: {
+        type: Number,
+        required: true,
+        default: 0,
     }
 });
 let author = ref("User_connected")
@@ -42,7 +47,7 @@ auth.onAuthStateChanged(user => {
         <div class="d-flex gap-2">
             <button type="button" class="rounded-pill btn" :class="(user_connected) ? 'btn-dark' : 'btn-danger'"
                 :disabled="reply_text == '' && !user_connected"
-                @click="post_reply(router, route, author, parent_id, reply_text)">Send</button>
+                @click="post_reply(router, route, author, parent_id, reply_text, parent_depth + 1, to_whom)">Send</button>
             <button type="button" class="rounded-pill btn btn-outline-danger" @click="$emit('cancel')">Cancel</button>
         </div>
     </div>
