@@ -60,8 +60,7 @@ const loading = ref(false);
 const isUploading = ref(false);
 const router = useRouter();
 
-const DEFAULT_PROFILE_PICTURE =
-    "https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg";
+const DEFAULT_PROFILE_PICTURE = "@/src/assets/user.png";
 
 const handleFileUpload = async (event) => {
     const file = event.target.files[0];

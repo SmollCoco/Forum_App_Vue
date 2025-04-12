@@ -6,33 +6,31 @@
             </router-link>
         </div>
         <div id="body">
-
             <div class="profile-container">
                 <div v-if="loading" class="loading-container">
-                <p>Loading profile...</p>
-            </div>
-            <div v-else-if="userId" class="profile-card">
+                    <p>Loading profile...</p>
+                </div>
+                <div v-else-if="userId" class="profile-card">
                     <div class="profile-header">
                         <img
-                        v-if="userInfo && userInfo.pfp"
-                        :src="userInfo.pfp"
-                        alt="Profile Picture"
+                            v-if="userInfo && userInfo.pfp"
+                            :src="userInfo.pfp"
+                            alt="Profile Picture"
                             class="profile-pic"
-                    />
+                        />
                         <img
-                        v-else
-                       
+                            v-else
                             src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
                             alt="Default Profile Picture"
-                        class="profile-pic"
-                    />
+                            class="profile-pic"
+                        />
                         <div class="profile-info" v-if="userInfo">
                             <h2 class="profile-name">
-                            {{ userInfo.name || "No Name Provided" }}
-                        </h2>
+                                {{ userInfo.name || "No Name Provided" }}
+                            </h2>
                             <p class="profile-email">
-                            {{ userInfo.email || "No Email Provided" }}
-                        </p>
+                                {{ userInfo.email || "No Email Provided" }}
+                            </p>
                         </div>
                     </div>
                     <div class="profile-body">
@@ -41,24 +39,26 @@
                             {{ isLoggedIn ? "Logged In" : "Logged Out" }}
                         </p>
                         <div class="profile-actions">
-                            <button class="btn btn-danger" @click="handleLogout">
-                            Logout
-                        </button>
                             <button
-                            class="btn btn-edit"
-                            @click="navigateToEditProfile"
-                        >
-                            Edit Profile
-                        </button>
+                                class="btn btn-danger"
+                                @click="handleLogout"
+                            >
+                                Logout
+                            </button>
+                            <button
+                                class="btn btn-edit"
+                                @click="navigateToEditProfile"
+                            >
+                                Edit Profile
+                            </button>
                         </div>
                     </div>
-
                 </div>
                 <div v-else class="not-logged-in">
                     <p>You are not logged in.</p>
                     <router-link to="/login" class="btn btn-primary"
-                    >Login</router-link
-                >
+                        >Login</router-link
+                    >
                 </div>
             </div>
             <div id="discussions-container">
@@ -68,14 +68,21 @@
                         <li>No discussions found.</li>
                     </ul>
                     <ul>
-                        <li v-for="discussion in discussions" :key="discussion.id">
-                            <div v-if="discussion.titre" class="discussion-item">
-                                <router-link :to="`/discussion/${discussion.id}`">
+                        <li
+                            v-for="discussion in discussions"
+                            :key="discussion.id"
+                        >
+                            <div
+                                v-if="discussion.titre"
+                                class="discussion-item"
+                            >
+                                <router-link
+                                    :to="`/discussion/${discussion.id}`"
+                                >
                                     <strong>{{ discussion.titre }}</strong>
                                 </router-link>
                                 <p>{{ discussion.contenu }}</p>
                             </div>
-
                         </li>
                     </ul>
                 </div>
@@ -106,7 +113,6 @@
     /* justify-content: center; */
     /* margin-bottom: 20px; */
     height: 20%;
-
 }
 
 .profile-container {
@@ -242,7 +248,7 @@
     padding: 10px;
     border: 1px solid #d0d7de;
     /* border-radius: 5px; */
-    
+
     width: 100%;
 }
 
@@ -251,20 +257,15 @@
 } */
 </style>
 <script setup>
-import { ref, watch, reactive, onMounted } from "vue";;
-import { useCurrentUserId } from "@/composables/useCurrentUserId.js";;
-import { getUserInfo } from "@/composables/useUserInfo.js";;
-import { authStateListener } from "@/composables/authStateListener.js";;
+import { ref, watch } from "vue";
+import { useCurrentUserId } from "@/composables/useCurrentUserId.js";
+import { getUserInfo } from "@/composables/useUserInfo.js";
+import { authStateListener } from "@/composables/authStateListener.js";
 import { useStore } from "@/composables/getDiscussions.js";
-import logout from "@/composables/userLogout.js";;
-import { useRouter } from "vue-router";;
+import logout from "@/composables/userLogout.js";
+import { useRouter } from "vue-router";
 
-const { currentUserId } = useCurrentUserId();
-const userId = currentUserId;
-const userInfo = ref(null);
-const isLoggedIn = ref(false);
 const discussions = ref([]); // Store discussions of the logged-in user
-const router = useRouter();
 
 const { discussions: allDiscussions, fetchDiscussions } = useStore();
 const { currentUserId } = useCurrentUserId();
@@ -279,31 +280,29 @@ watch(userId, async (newVal) => {
     if (newVal) {
         try {
             loading.value = true; // Start loading
-            const user = await getUserInfo(newVal);;
-            userInfo.value = user;;
+            const user = await getUserInfo(newVal);
+            userInfo.value = user;
 
             // Fetch discussions of the logged-in user
             await fetchDiscussions();
             discussions.value = allDiscussions.value.filter(
-                (discussion) => discussion.auteur === userInfo.value.name
+                (discussion) =>
+                    userInfo.value && discussion.auteur === userInfo.value.name
             );
         } catch (error) {
-            console.error("Error fetching user info or discussions:", error);;
+            console.error("Error fetching user info or discussions:", error);
         } finally {
             loading.value = false; // Stop loading
         }
     } else {
         userInfo.value = null;
-        loading.value = false; // Stop loading if no user;
+        loading.value = false; // Stop loading if no user
         discussions.value = [];
     }
-});
 });
 
 // Listen to auth changes for isLoggedIn
 authStateListener((status) => {
-    isLoggedIn.value = status;
-});
     isLoggedIn.value = status;
 });
 

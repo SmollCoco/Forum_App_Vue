@@ -1,12 +1,65 @@
 import { auth, db } from "@/firebase";
-import { updateEmail, deleteUser, sendEmailVerification } from "firebase/auth";
-import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { deleteUser, signOut, updateEmail } from "firebase/auth";
+import {
+    doc,
+    deleteDoc,
+    updateDoc,
+    collection,
+    query,
+    where,
+    getDocs,
+    writeBatch,
+} from "firebase/firestore";
+
+/**
+ * Delete the user's account and related discussions.
+ */
+export async function deleteUserAccount() {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("No user is currently logged in.");
+    }
+
+    const userDocRef = doc(db, "users", user.uid);
+
+    try {
+        // Delete all discussions authored by the user
+        const discussionsQuery = query(
+            collection(db, "discussions"),
+            where("auteur", "==", user.displayName || user.email)
+        );
+        const discussionsSnapshot = await getDocs(discussionsQuery);
+
+        if (!discussionsSnapshot.empty) {
+            const batch = writeBatch(db);
+            discussionsSnapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+        }
+
+        // Delete the user's Firestore document
+        await deleteDoc(userDocRef);
+
+        // Delete the user's Firebase Auth account
+        await deleteUser(user);
+
+        // Log out the user
+        await signOut(auth);
+    } catch (error) {
+        if (error.code === "auth/requires-recent-login") {
+            throw new Error("You need to log in again to delete your account.");
+        } else {
+            console.error("Error deleting user account:", error);
+            throw error;
+        }
+    }
+}
 
 /**
  * Update the user's profile information.
- * @param {string} name - The new name for the user.
- * @param {string} email - The new email for the user.
- * @param {string} profilePicture - The new profile picture for the user.
+ * @param {Object} updates - The updates to apply (e.g., name, email, profilePicture).
  */
 export async function updateProfileInfo({ name, email, profilePicture }) {
     const user = auth.currentUser;
@@ -30,6 +83,20 @@ export async function updateProfileInfo({ name, email, profilePicture }) {
         if (email) {
             await updateEmail(user, email);
         }
+
+        // Update the author's name in all discussions
+        if (name) {
+            const discussionsQuery = query(
+                collection(db, "discussions"),
+                where("auteur", "==", user.displayName || user.email)
+            );
+            const discussionsSnapshot = await getDocs(discussionsQuery);
+            const batch = writeBatch(db);
+            discussionsSnapshot.forEach((doc) => {
+                batch.update(doc.ref, { auteur: name });
+            });
+            await batch.commit();
+        }
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {
             throw new Error(
@@ -43,49 +110,5 @@ export async function updateProfileInfo({ name, email, profilePicture }) {
             console.error("Error updating profile info:", error);
             throw error;
         }
-    }
-}
-
-/**
- * Delete the user's account.
- */
-export async function deleteUserAccount() {
-    const user = auth.currentUser;
-
-    if (!user) {
-        throw new Error("No user is currently logged in.");
-    }
-
-    const userDocRef = doc(db, "users", user.uid);
-
-    try {
-        await deleteDoc(userDocRef);
-        await deleteUser(user);
-    } catch (error) {
-        if (error.code === "auth/requires-recent-login") {
-            throw new Error("You need to log in again to delete your account.");
-        } else {
-            console.error("Error deleting user account:", error);
-            throw error;
-        }
-    }
-}
-
-/**
- * Send an email verification to the current user.
- */
-export async function sendVerificationEmail() {
-    const user = auth.currentUser;
-
-    if (!user) {
-        throw new Error("No user is currently logged in.");
-    }
-
-    try {
-        await sendEmailVerification(user);
-        alert("Verification email sent. Please check your inbox.");
-    } catch (error) {
-        console.error("Error sending verification email:", error);
-        throw new Error("Failed to send verification email. Please try again.");
     }
 }
