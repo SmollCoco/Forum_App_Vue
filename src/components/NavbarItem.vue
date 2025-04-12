@@ -28,8 +28,7 @@ onAuthStateChanged(auth, (user) => {
 
 <template>
     <div
-        class="navbar navbar-expand d-flex justify-content-between p-3 border-bottom"
-    >
+        class="navbar navbar-expand d-flex justify-content-between p-3 border-bottom">
         <div>
             <router-link to="/">
                 <img src="../assets/logo.png" width="120px" alt="Logo" />

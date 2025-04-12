@@ -6,6 +6,11 @@ import ReplyModal from './ReplyModal.vue';
 import { viewDepthKey } from 'vue-router';
 let show_response = ref(false);
 const props = defineProps({
+    parent_id: {
+        type: String,
+        required: true,
+        default: "id",
+    },
     auteur: {
         type: String,
         required: true,
@@ -56,7 +61,7 @@ let date_string = computed(() => { return get_date_string(props.date) });
             <div class="btn rounded-pill fw-bold fx-w" @click="show_response = !show_response">
                 Reply
             </div>
-            <reply-modal v-if="show_response" :to_whom="auteur" :parent_id="id" :parent_depth="depth" @cancel="show_response = false" />
+            <reply-modal v-if="show_response" :to_whom="auteur" :parent_id="parent_id" :parent_depth="depth" @cancel="show_response = false" />
         </div>
     </div>
 </template>

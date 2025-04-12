@@ -1,6 +1,6 @@
 import { useStore } from './getDiscussions';
 
-export async function getReplies(DiscId) {
+export async function getdiscId(DiscId) {
   const { discussions, fetchDiscussions } = useStore();
 
   if (discussions.value.length === 0) {
@@ -9,6 +9,7 @@ export async function getReplies(DiscId) {
 
   for (let disc of discussions.value) {
     if(disc.id==DiscId){
+      console.log(disc);
         return disc;
     }
   }

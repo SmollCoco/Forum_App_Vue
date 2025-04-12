@@ -1,4 +1,5 @@
-export function postDiscussion(post, router) {
+import { db } from '@/firebase';
+export async function postDiscussion(post, router) {
     console.log("Posting a discussion", post);
     // definition of post
     /*
@@ -10,6 +11,11 @@ export function postDiscussion(post, router) {
         }
         The only thing left is to add the date and generate an id for the discussion
     */
-    // At the end we go to the home page
+   post.topic=[...post.topic];
+   post={
+    ...post,
+    date:Date().now,
+   }
+   const docRef = await addDoc(collection(db, "discussions"), post);
     router.push('/');
 }

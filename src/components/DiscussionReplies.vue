@@ -21,7 +21,7 @@ onMounted(async () => {
 <template>
     <div class="mx-3 p-1 border-left">
         <div v-for="(reply, index) of replies" :key="index">
-            <ReplyItem v-bind="reply"/>
+            <ReplyItem v-bind="reply" :parent_id="reply.parent.id"/>
         </div>
     </div>
 </template>

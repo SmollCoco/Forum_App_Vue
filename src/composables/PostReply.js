@@ -1,20 +1,19 @@
 /* eslint-disable no-unused-vars */
-import {doc, setDoc} from "firebase/firestore";
-import { useStore } from './getDiscussions';
+import { db } from '@/firebase';
+import { collection, doc, addDoc, Timestamp } from "firebase/firestore";
 
-export async function post_reply( author, reply,parent_id) {
-      const { discussions, fetchDiscussions } = useStore();
-      if (discussions.value.length === 0) {
-        await fetchDiscussions();
-      }
-      const replyId = `${parent_id}_${Date.now()}`;
-      await setDoc(doc(db, "discussions",replyId), {
+export async function post_reply( author, reply,parent_id,depth,parent_name, router) {
+  const post={
         auteur: author,
         contenu: reply,
-        date: Date.now(),
-        parent:`/discussion/${parent_id}`,
+        date: Timestamp.fromDate(new Date(Date.now())),
+        parent: doc(db, "discussions", parent_id),
+        parentName:parent_name,
+        depth:depth,
 
-      });
+      }
 
+      const docRef = await addDoc(collection(db, "discussions"), post);
+      router.go();
   
 }

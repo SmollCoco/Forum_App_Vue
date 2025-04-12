@@ -2,6 +2,7 @@
 <script setup>
 import NavbarItem from '@/components/NavbarItem.vue';
 import DiscussionDetail from '../components/DiscussionDetail.vue';
+
 </script>
 
 <template>

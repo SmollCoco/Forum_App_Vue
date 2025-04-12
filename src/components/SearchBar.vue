@@ -53,7 +53,7 @@ const handleBlur = () => {
 </script>
 
 <template>
-  <div class="mx-3 rounded-1 bg-white z-1 search-bar-container border-bottom" style="width: 50%;">
+  <div class="mx-3 rounded-1 bg-white z-1 search-bar-container" style="width: 50%;">
     <input class="form-control me-2 rounded-pill border-0" type="text" placeholder="Search MAYY" v-model="search_field"
       ref="inputref" @focus="cliick = true" @blur="handleBlur" @input="cliick = search_field.trim().length > 0" />
 

@@ -6,7 +6,6 @@ import { post_reply } from '../composables/PostReply';
 import { auth } from '@/firebase'
 
 const router = useRouter();
-const route = useRoute();
 
 const props = defineProps({
     to_whom: {
@@ -20,8 +19,7 @@ const props = defineProps({
     },
     parent_depth: {
         type: Number,
-        required: true,
-        default: 0,
+        default: -1,
     }
 });
 let author = ref("User_connected")
@@ -46,8 +44,8 @@ auth.onAuthStateChanged(user => {
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="rounded-pill btn" :class="(user_connected) ? 'btn-dark' : 'btn-danger'"
-                :disabled="reply_text == '' && !user_connected"
-                @click="post_reply( author, reply, parent_id)">Send</button>
+                :disabled="reply_text == '' || !user_connected"
+                @click="post_reply( author, reply_text,parent_id,parent_depth+1,to_whom, router)">Send</button>
             <button type="button" class="rounded-pill btn btn-outline-danger" @click="$emit('cancel')">Cancel</button>
         </div>
     </div>
