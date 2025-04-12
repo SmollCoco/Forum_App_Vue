@@ -1,18 +1,23 @@
+import { ref, onMounted, onUnmounted } from "vue";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/firebase";
 
-import { ref, onMounted } from 'vue'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/firebase'
-
-const currentUserId = ref(null)
+const currentUserId = ref(null);
 
 export function useCurrentUserId() {
+    let unsubscribe;
+
     onMounted(() => {
-        onAuthStateChanged(auth, (user) => {
-            currentUserId.value = user ? user.uid : null
-        })
-    })
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+            currentUserId.value = user ? user.uid : null;
+        });
+    });
+
+    onUnmounted(() => {
+        if (unsubscribe) unsubscribe();
+    });
 
     return {
-        currentUserId
-    }
+        currentUserId,
+    };
 }
