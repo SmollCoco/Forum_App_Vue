@@ -20,9 +20,9 @@ const props = defineProps({
 });
 
 let post = reactive({
-    id: props.id,
-    topics: new Set([]),
-    title: "",
+    auteur: props.id,
+    topic: new Set([]),
+    titre: "",
     contenu: "",
 });
 
@@ -31,7 +31,7 @@ let topic_stream = ref("");
 function check_input(key) {
     console.log("Great")
     if (key === ' ' && topic_stream.value.trim()){
-        post.topics.add(topic_stream.value.trim().toLowerCase());
+        post.topic.add(topic_stream.value.trim().toLowerCase());
         topic_stream.value = "";
     }
     console.log(post);
@@ -53,7 +53,7 @@ function check_input(key) {
                     </div>
                     <div class="d-flex gap-2 p-2 flex-wrap ps-4">
                         <TopicItem deleteable :topic="topic" @remove="(topic) => topics.delete(topic)"
-                            v-for="(topic, index) of post.topics" :key="index" />
+                            v-for="(topic, index) of post.topic" :key="index" />
                         <input type="text" class="form-control rounded-pill w-25"
                             placeholder="Add topics, Space will create a new topic" v-model="topic_stream"
                             @keydown=" (event) => check_input(event.key)">
@@ -62,7 +62,7 @@ function check_input(key) {
                 <!--Here we add the title-->
                 <div>
                     <input type="text" id="title" class="form-control rounded-pill p-4" placeholder="Add title"
-                        v-model="post.title">
+                        v-model="post.titre">
                 </div>
                 <!--Here we add the content-->
                 <div class="form-floating">
@@ -71,7 +71,7 @@ function check_input(key) {
                     <label for="floatingTextarea2">Comments</label>
                 </div>
                 <!--Here we add the submission button-->
-                <input type="button" class="btn rounded-pill fw-bold fx-w" value="Submit" :disabled="!post.title" @click="postDiscussion(post, router)">
+                <input type="button" class="btn rounded-pill fw-bold fx-w" value="Submit" :disabled="!post.titre" @click="postDiscussion(post, router)">
             </form>
         </div>
     </div>

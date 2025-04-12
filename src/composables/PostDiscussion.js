@@ -3,10 +3,10 @@ export function postDiscussion(post, router) {
     // definition of post
     /*
         post: {
-            id: String // The username
-            topics: Set // You should cast it into a list
-            title: String,
-            content: String,
+            auteur: String // The username
+            topic: Set // You should cast it into a list
+            titre: String,
+            contenu: String,
         }
         The only thing left is to add the date and generate an id for the discussion
     */
