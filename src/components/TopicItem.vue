@@ -21,13 +21,13 @@
             <button type="button" class="btn btn-outline-primary btn-sm"> {{ topic }}</button>
         </RouterLink>
         <div v-else>
-            <button type="button" class="btn rounded-pill btn-dark fw-bold btn-sm" @click="$emit('remove', topic)"> {{ topic }}</button>
+            <button type="button" class="btn rounded-pill btn-dark fw-bold btn-sm btn-smx" @click="$emit('remove', topic)"> {{ topic }}</button>
         </div>
     </div>
 </template>
 
 <style scoped>
-.btn-sm:hover{
+.btn-smx:hover{
     background-color: #dc3545;
 }
 .btn-sm{
