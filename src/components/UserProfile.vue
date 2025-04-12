@@ -5,6 +5,7 @@
                 <img src="../assets/logo.png" width="120px" alt="Logo" />
             </router-link>
         </div>
+        <!-- <NavbarItem /> -->
         <div id="body">
 
             <div class="profile-container">
@@ -12,9 +13,7 @@
                     <div class="profile-header">
                         <img v-if="userInfo && userInfo.pfp" :src="userInfo.pfp" alt="Profile Picture"
                             class="profile-pic" />
-                        <img v-else
-                            src="https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
-                            alt="Default Profile Picture" class="profile-pic" />
+                        <img v-else src="../assets/user.png" alt="Default Profile Picture" class="profile-pic" />
                         <div class="profile-info">
                             <h2 class="profile-name">{{ userInfo.name }}</h2>
                             <p class="profile-email">{{ userInfo.email }}</p>
@@ -68,6 +67,7 @@
     height: 100vh;
     /* background-color: #f6f8fa; */
 }
+
 #body {
     font-family: Arial, sans-serif;
     /* background-color: #f6f8fa; */
@@ -197,6 +197,7 @@
     height: 100%;
     padding-left: 5%;
 }
+
 .user-discussions {
     /* margin-top: 20px; */
     height: 100%;
@@ -214,7 +215,7 @@
     padding: 10px;
     border: 1px solid #d0d7de;
     /* border-radius: 5px; */
-    
+
     width: 100%;
 }
 
@@ -230,6 +231,7 @@ import { authStateListener } from "@/composables/authStateListener.js";
 import { useStore } from "@/composables/getDiscussions.js";
 import logout from "@/composables/userLogout.js";
 import { useRouter } from "vue-router";
+// import {NavbarItem} from "@/components/NavbarItem.vue";
 
 const { currentUserId } = useCurrentUserId();
 const userId = currentUserId;
