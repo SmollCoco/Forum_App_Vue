@@ -5,7 +5,7 @@ import RegisterView from '../views/RegisterView.vue'
 import AdminView from '../views/AdminView.vue'
 import DiscussionView from '../views/DiscussionView.vue'
 import ProfileView from '../views/ProfileView.vue'
-import DiscussionList from '@/components/DiscussionList.vue'
+import PostView from '@/views/PostView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,7 +45,19 @@ const router = createRouter({
       path: '/Admin/:username',
       name: 'Admin',
       component: AdminView,
-    }
+    },
+    {
+      path: '/submit/:username',
+      name: 'CreatePost',
+      component: PostView,
+      props: true,
+    },
+    {
+      path: '/modify/:username',
+      name: 'ModifyPost',
+      component: PostView,
+      props: true,
+    },
   ],
 });
 

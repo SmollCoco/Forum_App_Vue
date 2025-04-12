@@ -46,8 +46,8 @@ let date_string = computed(() => { return get_date_string(props.date)});
 
 <template>
 
-    <div class="d-flex justify-content-center rounded">
-        <div class="w-75 bg-opacity-10 bg-black">
+    <div class="d-flex justify-content-center">
+        <div class="w-75 bg-opacity-10 bg-black rounded">
             <div class="m-2 p-2 rounded border border-black">
                 <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
                     <!--Header containing the author, the topics and the date-->

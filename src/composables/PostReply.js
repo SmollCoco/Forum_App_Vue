@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-export function post_reply(router, route, author, parent, reply) {
+export function post_reply(router, route, author, parent, reply, depth_parent, parent_name) {
   console.log("hi");
   // From what i know, a response has an author a content, a date, a parent_id
   // the date should be Date.now()

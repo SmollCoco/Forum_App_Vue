@@ -7,7 +7,7 @@ export async function getReplies(idref, replies = []) {
     await fetchDiscussions();
   }
 
-  for (let disc of discussions.value) {
+  for (let disc of discussions.value.reverse()) {
     if (disc.parent && disc.parent.id === idref) {
       replies.push(disc);
       await getReplies(disc.id, replies);
