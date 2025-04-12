@@ -22,12 +22,13 @@ const props = defineProps({
         default: -1,
     }
 });
-let author = ref("User_connected")
+let User = ref(null);
 let reply_text = ref('')
 let user_connected = ref(false);
 auth.onAuthStateChanged(user => {
     if (user) {
         // User is logged in; you can fetch additional data if needed.
+        User.value = user;
         user_connected.value = true;
     } else {
         // No user is logged in.
@@ -45,7 +46,7 @@ auth.onAuthStateChanged(user => {
         <div class="d-flex gap-2">
             <button type="button" class="rounded-pill btn" :class="(user_connected) ? 'btn-dark' : 'btn-danger'"
                 :disabled="reply_text == '' || !user_connected"
-                @click="post_reply( author, reply_text,parent_id,parent_depth+1,to_whom, router)">Send</button>
+                @click="post_reply( User.displayName, reply_text,parent_id,parent_depth+1,to_whom, router)">Send</button>
             <button type="button" class="rounded-pill btn btn-outline-danger" @click="$emit('cancel')">Cancel</button>
         </div>
     </div>

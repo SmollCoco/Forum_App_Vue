@@ -30,7 +30,7 @@ onMounted(
             post.topic = response.topic;
             post.auteur = response.auteur;
         });
-        console.log(post);
+        console.log("post detail", post);
     }
 )
 

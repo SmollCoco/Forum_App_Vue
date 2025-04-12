@@ -67,7 +67,7 @@ function check_input(key) {
                 <!--Here we add the content-->
                 <div class="form-floating">
                     <textarea class="form-control" placeholder="What do you want us to know about you?"
-                        id="floatingTextarea2" style="height: 300px"></textarea>
+                        id="floatingTextarea2" style="height: 300px" v-model="post.contenu"></textarea>
                     <label for="floatingTextarea2">Comments</label>
                 </div>
                 <!--Here we add the submission button-->

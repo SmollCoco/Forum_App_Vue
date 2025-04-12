@@ -1,4 +1,5 @@
 import { db } from '@/firebase';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
 export async function postDiscussion(post, router) {
     console.log("Posting a discussion", post);
     // definition of post
@@ -14,7 +15,7 @@ export async function postDiscussion(post, router) {
    post.topic=[...post.topic];
    post={
     ...post,
-    date:Date().now,
+    date: Timestamp.fromDate(new Date(Date.now())),
    }
    const docRef = await addDoc(collection(db, "discussions"), post);
     router.push('/');
