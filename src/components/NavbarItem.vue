@@ -24,6 +24,10 @@ onAuthStateChanged(auth, (user) => {
         currentUser.value = null;
     }
 });
+
+const logout = () => {
+    auth.signOut();
+};
 </script>
 
 <template>
@@ -46,6 +50,9 @@ onAuthStateChanged(auth, (user) => {
                     >
                         <span class="fw-bold text-white">Profile</span>
                     </router-link>
+                </button>
+                <button class="btn btn-danger rounded-pill" @click="logout">
+                    Logout
                 </button>
             </div>
             <div v-else class="d-flex gap-3">
