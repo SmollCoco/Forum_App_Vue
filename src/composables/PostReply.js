@@ -1,11 +1,19 @@
 /* eslint-disable no-unused-vars */
+import { db } from '@/firebase';
+import { collection, doc, addDoc, Timestamp } from "firebase/firestore";
 
-export function post_reply(router, route, author, parent, reply) {
-  console.log("hi");
-  // From what i know, a response has an author a content, a date, a parent_id
-  // the date should be Date.now()
-  // The function provides a parent and a content
-  // The author should be the person connected thus making the authentication necessary
-  if (route.path == `/discussion/${parent}`) {router.go();}
- else {router.push(`/discussion/${parent}`);}
+export async function post_reply( author, reply,parent_id,depth,parent_name, router) {
+  const post={
+        auteur: author,
+        contenu: reply,
+        date: Timestamp.fromDate(new Date(Date.now())),
+        parent: doc(db, "discussions", parent_id),
+        parentName:parent_name,
+        depth:depth,
+
+      }
+
+      const docRef = await addDoc(collection(db, "discussions"), post);
+      router.go();
+  
 }

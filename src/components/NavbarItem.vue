@@ -19,21 +19,16 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         user_connected.value = true;
         currentUser.value = user;
+        console.log("user", user);
     } else {
         user_connected.value = false;
         currentUser.value = null;
     }
 });
-
-const logout = () => {
-    auth.signOut();
-};
 </script>
 
 <template>
-    <div
-        class="navbar navbar-expand d-flex justify-content-between p-3 border-bottom"
-    >
+    <div class="navbar navbar-expand d-flex justify-content-between p-3 border-bottom">
         <div>
             <router-link to="/">
                 <img src="../assets/logo.png" width="120px" alt="Logo" />
@@ -42,35 +37,27 @@ const logout = () => {
         <search-bar class="my-2" />
         <div>
             <div v-if="user_connected">
-                <button class="btn btn-primary rounded-pill">
-                    <router-link
-                        :to="`/profile/${currentUser?.uid || 'user'}`"
-                        class="nav-link active"
-                        aria-current="page"
-                    >
-                        <span class="fw-bold text-white">Profile</span>
+                <button class="btn rounded-pill fw-bold fx-w me-2">
+                    <router-link :to="`/submit/${currentUser?.displayName || 'user'}`" class="nav-link active"
+                        aria-current="page">
+                        Create
                     </router-link>
                 </button>
-                <button class="btn btn-danger rounded-pill" @click="logout">
-                    Logout
+                <button class="btn btn-primary rounded-pill">
+                    <router-link :to="`/profile/${currentUser?.displayName || 'user'}`" class="nav-link active"
+                        aria-current="page">
+                        <span class="fw-bold text-white">Profile</span>
+                    </router-link>
                 </button>
             </div>
             <div v-else class="d-flex gap-3">
                 <button class="btn btn-primary rounded-pill">
-                    <router-link
-                        to="/login"
-                        class="nav-link active"
-                        aria-current="page"
-                    >
+                    <router-link to="/login" class="nav-link active" aria-current="page">
                         <span class="fw-bold text-white">Login</span>
                     </router-link>
                 </button>
                 <button class="btn btn-success rounded-pill">
-                    <router-link
-                        to="/register"
-                        class="nav-link active"
-                        aria-current="page"
-                    >
+                    <router-link to="/register" class="nav-link active" aria-current="page">
                         <span class="fw-bold text-white">Register</span>
                     </router-link>
                 </button>
@@ -80,5 +67,13 @@ const logout = () => {
 </template>
 
 <style scoped>
-/* Vos styles ici */
+.fx-w {
+    position: relative;
+    background-color: rgb(219, 219, 219);
+}
+
+.fx-w:hover {
+    background-color: black;
+    color: white;
+}
 </style>
