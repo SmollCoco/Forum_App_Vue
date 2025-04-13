@@ -47,6 +47,10 @@ let preview = computed(() => {
 });
 
 let show_response = ref(false);
+
+const handleReport = async () => {
+    await reportDiscussion(props.id);
+};
 </script>
 
 <template>
@@ -102,27 +106,69 @@ let show_response = ref(false);
   color: rgb(10, 73, 209);
 }
 
-.r-link {
-  font-weight: 500;
-  color: black;
-  text-decoration: none;
+/* Header styling */
+.discussion-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
-.r-link:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+.author-link {
+    text-decoration: none;
+    color: var(--primary-color);
 }
 
 .div-link:hover {
   text-decoration: underline;
 }
-.fx-w {
-  width: 90px;
-  position: relative;
-  background-color: rgb(219, 219, 219);
+
+.author {
+    font-weight: bold;
 }
-.fx-w:hover {
-  background-color: black;
-  color: white;
+
+.date {
+    color: gray;
+    font-size: small;
+}
+
+.topics {
+    display: flex;
+    gap: 4px;
+}
+
+/* Title and preview styling */
+.discussion-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.discussion-preview {
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+/* Actions styling */
+.discussion-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.reply-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reply-btn:hover {
+    background-color: var(--primary-hover);
 }
 .reply-btn {
   display: flex;

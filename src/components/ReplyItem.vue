@@ -1,13 +1,13 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { ref, computed } from 'vue';
-import { get_date_string } from '../composables/dateString'
-import ReplyModal from './ReplyModal.vue';
-import { viewDepthKey } from 'vue-router';
+import { ref, computed } from "vue";
+import { get_date_string } from "../composables/dateString";
+import ReplyModal from "./ReplyModal.vue";
 let show_response = ref(false);
 const props = defineProps({
     id: {
         type: String,
+        required: true,
     },
     auteur: {
         type: String,
@@ -17,12 +17,12 @@ const props = defineProps({
     contenu: {
         type: String,
         required: true,
-        default: 'Amazing',
+        default: "Amazing",
     },
     date: {
         type: String,
         required: true,
-        default: () => new Date()
+        default: () => new Date(),
     },
     parent: {
         type: String,
@@ -31,37 +31,54 @@ const props = defineProps({
     depth: {
         type: Number,
         required: true,
-        default: 0
-    }, 
+        default: 0,
+    },
     parentName: {
         type: String,
         required: true,
         default: "Parent",
-    }
+    },
 });
 
-let date_string = computed(() => { return get_date_string(props.date) });
+let date_string = computed(() => {
+    return get_date_string(props.date);
+});
 </script>
 
 <template>
-    <div class="bg-white p-2 r-link" >
-        <div class="d-flex gap-1 flex-column rounded" :class="(depth >= 1) ? 'ms-lg-4': ''">
-            <!--Header containing the author, the topics and the date-->
+    <div class="bg-white p-2 r-link">
+        <div class="w-100 d-flex gap-1 flex-column rounded">
+            <!-- Header containing the author, the topics, and the date -->
             <div class="d-flex align-items-center gap-1 z-1">
-                <router-link :to="`/profile/${auteur}`" class="d-flex gap-1 text-decoration-none align-items-center">
-                    <img src="../assets/discussion.png" width="25" class="rounded-circle d-block">
-                    <span class="d-block link div-link"> u/{{ auteur }}
-                    </span>
+                <router-link
+                    :to="`/profile/${auteur}`"
+                    class="d-flex gap-1 text-decoration-none align-items-center"
+                >
+                    <img
+                        src="../assets/discussion.png"
+                        width="25"
+                        class="rounded-circle d-block"
+                    />
+                    <span class="d-block link div-link"> u/{{ auteur }} </span>
                 </router-link>
-                <span style="color: gray; font-size: small;"> | {{ date_string }} | </span>
+                <span style="color: gray; font-size: small">
+                    | {{ date_string }} |
+                </span>
             </div>
-            <div class="ms-lg-2 mb-2"> <router-link :to="`/profile/${parentName}`"> @{{ parentName }} </router-link> {{ contenu }} </div>
-            <div class="btn rounded-pill fw-bold fx-w d-flex " @click="show_response = !show_response">
-                <span class="material-icons">reply</span>Reply
-            </div>
-           
-            <reply-modal v-if="show_response" :to_whom="auteur" :parent_id="id" :parent_depth="depth" @cancel="show_response = false" />
+            <div>{{ contenu }}</div>
         </div>
+        <button
+            class="btn rounded-pill fw-bold fx-w"
+            @click="show_response = !show_response"
+        >
+            Reply
+        </button>
+        <reply-modal
+            v-if="show_response"
+            :to_whom="auteur"
+            :parent_id="id"
+            @cancel="show_response = false"
+        />
     </div>
 </template>
 
@@ -76,7 +93,7 @@ let date_string = computed(() => { return get_date_string(props.date) });
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-.div-link{
+.div-link {
     font-size: 14px;
     color: black;
 }

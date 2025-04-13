@@ -44,10 +44,24 @@ auth.onAuthStateChanged(user => {
             <label for="floatingTextarea2">Reply to @{{ to_whom }}</label>
         </div>
         <div class="d-flex gap-2">
-            <button type="button" class="rounded-pill btn" :class="(user_connected) ? 'btn-dark' : 'btn-danger'"
-                :disabled="reply_text == '' || !user_connected"
-                @click="post_reply( User.displayName, reply_text,parent_id,parent_depth+1,to_whom, router)">Send</button>
-            <button type="button" class="rounded-pill btn btn-outline-danger" @click="$emit('cancel')">Cancel</button>
+            <button
+                type="button"
+                class="rounded-pill btn"
+                :class="user_connected ? 'btn-dark' : 'btn-danger'"
+                :disabled="reply_text.trim() === '' || !user_connected"
+                @click="
+                    post_reply(router, route, author, parent_id, reply_text)
+                "
+            >
+                Send
+            </button>
+            <button
+                type="button"
+                class="rounded-pill btn btn-outline-danger"
+                @click="$emit('cancel')"
+            >
+                Cancel
+            </button>
         </div>
     </div>
 </template>
@@ -55,5 +69,12 @@ auth.onAuthStateChanged(user => {
 <style scoped>
 .border {
     border: solid grey;
+}
+button:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+    border: 1px solid #d0d0d0;
+    opacity: 0.6;
 }
 </style>
