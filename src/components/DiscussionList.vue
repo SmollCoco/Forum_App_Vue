@@ -35,16 +35,16 @@ watch(() => props.topic, filterDiscussions);
 
 onMounted(filterDiscussions);
 
-const ordre=ref("Date ⬇");
+const ordre=ref("arrow_downward");
  function toogle(){
-  ordre.value=ordre.value=="Date ⬆"? ordre.value="Date ⬇" : ordre.value="Date ⬆";
+  ordre.value=ordre.value=="arrow_upward"? ordre.value="arrow_downward" : ordre.value="arrow_upward";
   filteredDiscussions.value=DateFilter(filteredDiscussions.value,ordre.value);
 
 }
 </script>
 
 <template>
-  <div type="button" class="btn rounded-pill fw-bold fx-w mx-5 my-2" v-on:click="toogle">{{ ordre }}</div>
+  <div type="button" class="btn rounded-pill fw-bold fx-w mx-5 my-2 d-flex" v-on:click="toogle">Date <span class="material-icons">{{ ordre }}</span></div>
   <div class="d-flex justify-content-center">
     
     <div class="w-75">

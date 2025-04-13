@@ -59,9 +59,10 @@ let date_string = computed(() => { return get_date_string(post.date)});
                     <div class="fs-3 fw-bold div-link"> {{ post.titre }}</div>
                     <div> {{ post.contenu }} </div>
                 </div>
-                <div class="btn rounded-pill fw-bold fx-w" @click="show_response = !show_response">
-                    Reply
-                </div>
+               
+                <div class="btn rounded-pill fw-bold fx-w d-flex " @click="show_response = !show_response">
+                <span class="material-icons">reply</span>Reply
+            </div>
                 <reply-modal v-if="show_response" :to_whom="post.auteur" :parent_id="post.id" @cancel="show_response = false" />
             </div>
             <DiscussionReplies :id="post.id" />
@@ -88,7 +89,7 @@ let date_string = computed(() => { return get_date_string(post.date)});
 }
 
 .fx-w {
-    width: 75px;
+    width: 90px;
     position: relative;
     background-color: rgb(219, 219, 219);
 }

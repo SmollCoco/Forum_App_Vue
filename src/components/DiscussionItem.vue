@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 import TopicItem from "./TopicItem.vue";
 import ReplyModal from "./ReplyModal.vue";
 import { get_date_string } from "../composables/dateString";
+import DiscussionSetting from "./DiscussionSetting.vue";
 const props = defineProps({
     id: {
         type: String,
@@ -51,8 +52,8 @@ let show_response = ref(false);
         <router-link :to="`/discussion/${id}`" class="r-link">
             <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
                 <!--Header containing the author, the topics and the date-->
-                <div class="d-flex align-items-center gap-lg-2 z-1">
-                    <router-link
+                <div class="d-flex align-items-center z-1">
+                        <router-link
                         :to="`/profile/${auteur}`"
                         class="d-flex gap-2 text-decoration-none align-items-center"
                     >
@@ -64,16 +65,19 @@ let show_response = ref(false);
                     <div v-for="(i, index) of topic" :key="index">
                         <topic-item :topic="i" />
                     </div>
+                    
                 </div>
                 <div class="fs-3 fw-bold div-link">{{ titre }}</div>
                 <div>{{ preview }}</div>
             </div>
         </router-link>
-        <div
-            class="btn rounded-pill fw-bold fx-w"
-            @click="show_response = !show_response"
-        >
-            Reply
+        <div class="w-100 d-flex gap-lg-2 justify-content-between rounded p-2">
+
+            <div class="reply-btn rounded-pill fw-bold fx-w h-25 align-self-end" @click="show_response = !show_response">
+    <span class="material-icons">reply</span>
+    Reply
+</div>
+            <DiscussionSetting class="z-2" :id="id" />
         </div>
         <reply-modal
             v-if="show_response"
@@ -109,7 +113,7 @@ let show_response = ref(false);
     text-decoration: underline;
 }
 .fx-w {
-    width: 75px;
+    width: 90px;
     position: relative;
     background-color: rgb(219, 219, 219);
 }
@@ -117,4 +121,23 @@ let show_response = ref(false);
     background-color: black;
     color: white;
 }
+.reply-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+    background-color: rgb(219, 219, 219);
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.reply-btn:hover {
+    background-color: black;
+    color: white;
+}
+.reply-btn .material-icons {
+    font-size: 18px;
+}
+
 </style>
