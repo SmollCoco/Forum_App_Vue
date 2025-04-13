@@ -41,7 +41,7 @@ auth.onAuthStateChanged(user => {
     <div class="mt-2 d-flex flex-column gap-3 p-2 border rounded">
         <div class="form-floating">
             <textarea class="form-control" style="height: 100px" v-model="reply_text"></textarea>
-            <label for="floatingTextarea2">Reply to @{{ parent_id }}</label>
+            <label for="floatingTextarea2">Reply to @{{ to_whom }}</label>
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="rounded-pill btn" :class="(user_connected) ? 'btn-dark' : 'btn-danger'"
