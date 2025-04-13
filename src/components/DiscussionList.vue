@@ -1,16 +1,16 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import DiscussionItem from './DiscussionItem.vue';
-import { useStore } from '@/composables/getDiscussions';
-import { getTopic_Disc } from '@/composables/getTopic_Disc';
-import {DateFilter} from '@/composables/date_filter';
+import { ref, onMounted, watch } from "vue";
+import DiscussionItem from "./DiscussionItem.vue";
+import { useStore } from "@/composables/getDiscussions";
+import { getTopic_Disc } from "@/composables/getTopic_Disc";
+import { DateFilter } from "@/composables/date_filter";
 
 const props = defineProps({
-  topic: {
-    type: String,
-    required: false,
-    default: "",
-  },
+    topic: {
+        type: String,
+        required: false,
+        default: "",
+    },
 });
 
 const { discussions, fetchDiscussions } = useStore();
@@ -40,69 +40,81 @@ onMounted(filterDiscussions);
     <div class="discussion-list-container">
         <!-- Date Sorting Button -->
         <div class="date-sorting-container">
-            <div
-                type="button"
-                class="btn rounded-pill fw-bold fx-w d-flex align-items-center"
-                @click="toggle"
-            >
+            <button class="sort-button" @click="toggle">
                 Date <span class="material-icons">{{ ordre }}</span>
-            </div>
+            </button>
         </div>
 
         <!-- Discussions List -->
-        <div class="discussions-container">
-            <div class="w-75">
-                <hr class="border-1 m-0" />
-                <div
-                    v-for="discussion in filteredDiscussions"
-                    :key="discussion.id"
-                >
-                    <DiscussionItem
-                        :id="discussion.id"
-                        :auteur="discussion.auteur"
-                        :titre="discussion.titre"
-                        :contenu="discussion.contenu"
-                        :date="discussion.date"
-                        :topic="discussion.topic"
-                    />
-                    <hr class="border-1 m-0" />
-                </div>
-            </div>
+        <div class="discussions-wrapper">
+            <DiscussionItem
+                v-for="discussion in filteredDiscussions"
+                :key="discussion.id"
+                :id="discussion.id"
+                :auteur="discussion.auteur"
+                :titre="discussion.titre"
+                :contenu="discussion.contenu"
+                :date="discussion.date"
+                :topic="discussion.topic"
+            />
         </div>
     </div>
 </template>
 
 <style scoped>
 .discussion-list-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .date-sorting-container {
     display: flex;
     justify-content: flex-end;
-    width: 75%;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.fx-w {
-    width: 90px;
-    position: relative;
-    background-color: rgb(219, 219, 219);
-    align-self: end;
-}
-
-.fx-w:hover {
-    background-color: black;
-    color: white;
-}
-
-.discussions-container {
+.sort-button {
     display: flex;
-    justify-content: center;
-    width: 100%;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #f1f2f2;
+    border: 1px solid #e2e2e2;
+    border-radius: 999px;
+    color: #2b2b2b;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sort-button:hover {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.sort-button .material-icons {
+    font-size: 18px;
+}
+
+.discussions-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .discussion-list-container {
+        padding: 16px;
+    }
+
+    .sort-button {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
 }
 
 .r-link {

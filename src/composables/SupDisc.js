@@ -11,5 +11,5 @@ export async function DeleteDisc(id, router) {
         await deleteDoc(doc(db, "discussions", reply.id));
     await deleteDoc(doc(db, "discussions", id));
     console.log(id);
-    router.go();
+    router.replace("/");
 }

@@ -9,7 +9,7 @@ export function useCurrentUserId() {
 
     onMounted(() => {
         unsubscribe = onAuthStateChanged(auth, (user) => {
-            currentUserId.value = user ? user.uid : null;
+            currentUserId.value = user ? user.displayName : null;
         });
     });
 

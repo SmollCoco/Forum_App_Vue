@@ -8,7 +8,8 @@ import PostView from "@/views/PostView.vue";
 import EditProfileView from "@/views/EditProfileView.vue";
 import AdminView from "@/views/AdminView.vue";
 import { auth } from "@/firebase";
-import { getUserInfo } from "@/composables/useUserInfo";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "@/firebase";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,8 +77,10 @@ router.beforeEach((to, from, next) => {
     if (to.name === "Admin") {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const userInfo = await getUserInfo(user.displayName);
-                if (userInfo?.isAdmin) {
+                const userDoc = await getDoc(
+                    doc(db, "users", user.displayName)
+                );
+                if (userDoc.exists() && userDoc.data().isAdmin === true) {
                     next();
                 } else {
                     alert("Access denied. Admins only.");
@@ -107,4 +110,3 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
- 

@@ -1,191 +1,245 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TopicItem from "./TopicItem.vue";
 import ReplyModal from "./ReplyModal.vue";
 import { get_date_string } from "../composables/dateString";
 import DiscussionSetting from "./DiscussionSetting.vue";
+import { getUserInfo } from "@/composables/useUserInfo";
+import defaultPfp from "@/assets/user.png";
+
 const props = defineProps({
-  id: {
-    type: String,
-    required: true,
-    default: "id",
-  },
-  auteur: {
-    type: String,
-    required: true,
-    default: "Yassine",
-  },
-  date: {
-    type: Date,
-    required: true,
-    default: () => new Date(),
-  },
-  titre: {
-    type: String,
-    required: true,
-    default: "Dummy Post",
-  },
-  topic: {
-    type: Array,
-    required: true,
-    default: () => ["Friendship", "Leadership"],
-  },
-  contenu: {
-    type: String,
-    required: true,
-    default: "Some content",
-  },
+    id: {
+        type: String,
+        required: true,
+        default: "id",
+    },
+    auteur: {
+        type: String,
+        required: true,
+        default: "Yassine",
+    },
+    date: {
+        type: Date,
+        required: true,
+        default: () => new Date(),
+    },
+    titre: {
+        type: String,
+        required: true,
+        default: "Dummy Post",
+    },
+    topic: {
+        type: Array,
+        required: true,
+        default: () => ["Friendship", "Leadership"],
+    },
+    contenu: {
+        type: String,
+        required: true,
+        default: "Some content",
+    },
+});
+
+const userPfp = ref(defaultPfp);
+
+onMounted(async () => {
+    try {
+        const userInfo = await getUserInfo(props.auteur);
+        if (userInfo?.pfp) {
+            userPfp.value = userInfo.pfp;
+        }
+    } catch (error) {
+        console.error("Error fetching user profile picture:", error);
+        userPfp.value = defaultPfp;
+    }
 });
 
 let date_string = computed(() => {
-  return get_date_string(props.date);
+    return get_date_string(props.date);
 });
 
 let preview = computed(() => {
-  return props.contenu.substring(0, 50);
+    return props.contenu.substring(0, 50);
 });
 
 let show_response = ref(false);
-
-const handleReport = async () => {
-    await reportDiscussion(props.id);
-};
 </script>
 
 <template>
-  <div class="m-2 p-2 r-link">
-    <router-link :to="`/discussion/${id}`" class="r-link">
-      <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
-        <!--Header containing the author, the topics and the date-->
-        <div class="d-flex align-items-center z-1">
-          <router-link
-            :to="`/profile/${auteur}`"
-            class="d-flex gap-2 text-decoration-none align-items-center"
-          >
-            <span class="d-block link div-link">u/{{ auteur }}</span>
-          </router-link>
-          <span style="color: gray; font-size: small">
-            | {{ date_string }} |
-          </span>
-          <div v-for="(i, index) of topic" :key="index">
-            <topic-item :topic="i" />
-          </div>
+    <div class="discussion-item">
+        <router-link :to="`/discussion/${id}`" class="discussion-content">
+            <!--Header containing the author, the topics and the date-->
+            <div class="discussion-header">
+                <router-link :to="`/profile/${auteur}`" class="author-link">
+                    <img
+                        :src="userPfp"
+                        width="32"
+                        height="32"
+                        class="profile-picture"
+                        alt="Profile"
+                        @error="userPfp = defaultPfp"
+                    />
+                    <span>u/{{ auteur }}</span>
+                </router-link>
+                <span class="date">{{ date_string }}</span>
+                <div class="topics">
+                    <topic-item
+                        v-for="(i, index) of topic"
+                        :key="index"
+                        :topic="i"
+                    />
+                </div>
+            </div>
+            <h2 class="discussion-title">{{ titre }}</h2>
+            <div class="discussion-preview">{{ preview }}</div>
+        </router-link>
+
+        <div class="discussion-actions">
+            <button class="reply-btn" @click="show_response = !show_response">
+                <span class="material-icons">reply</span>
+                Reply
+            </button>
+            <DiscussionSetting :id="id" :username="auteur" />
         </div>
-        <div class="fs-3 fw-bold div-link">{{ titre }}</div>
-        <div>{{ preview }}</div>
-      </div>
-    </router-link>
-    <div class="w-100 d-flex gap-lg-2 justify-content-between rounded p-2">
-      <div
-        class="reply-btn rounded-pill fw-bold fx-w h-25 align-self-end"
-        @click="show_response = !show_response"
-      >
-        <span class="material-icons">reply</span>
-        Reply
-      </div>
-      <DiscussionSetting class="z-2" :id="id" :username="auteur" />
+
+        <reply-modal
+            v-if="show_response"
+            :to_whom="auteur"
+            :parent_id="id"
+            @cancel="show_response = false"
+        />
     </div>
-    <reply-modal
-      v-if="show_response"
-      :to_whom="auteur"
-      :parent_id="id"
-      @cancel="show_response = false"
-    />
-  </div>
 </template>
 
 <style scoped>
-.link {
-  font-weight: 500;
-  color: black;
-  text-decoration: none;
+.discussion-item {
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
 }
 
-.link:hover {
-  color: rgb(10, 73, 209);
+.discussion-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Header styling */
+.discussion-content {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
 .discussion-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .author-link {
     text-decoration: none;
-    color: var(--primary-color);
+    color: #b92b27;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.div-link:hover {
-  text-decoration: underline;
+.profile-picture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #b92b27;
+    transition: all 0.2s ease;
 }
 
-.author {
-    font-weight: bold;
+.author-link:hover .profile-picture {
+    border-color: #a52622;
+    transform: scale(1.05);
 }
 
 .date {
-    color: gray;
-    font-size: small;
+    color: #636466;
+    font-size: 0.9rem;
 }
 
 .topics {
     display: flex;
-    gap: 4px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-/* Title and preview styling */
 .discussion-title {
     font-size: 1.25rem;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    color: #b92b27;
+    line-height: 1.3;
+    transition: color 0.2s ease;
+}
+
+.discussion-content:hover .discussion-title {
+    color: #a52622;
 }
 
 .discussion-preview {
-    color: var(--text-color);
+    color: #636466;
     font-size: 0.95rem;
+    line-height: 1.5;
 }
 
-/* Actions styling */
 .discussion-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e2e2;
 }
 
 .reply-btn {
-    background-color: var(--primary-color);
-    color: white;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    background-color: #f1f2f2;
     padding: 8px 16px;
     border-radius: 999px;
-    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease-in-out;
+    color: #2b2b2b;
+    border: none;
 }
 
 .reply-btn:hover {
-    background-color: var(--primary-hover);
+    background-color: #2b2b2b;
+    color: #ffffff;
 }
-.reply-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: bold;
-  background-color: rgb(219, 219, 219);
-  padding: 8px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-.reply-btn:hover {
-  background-color: black;
-  color: white;
-}
+
 .reply-btn .material-icons {
-  font-size: 18px;
+    font-size: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .discussion-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .discussion-title {
+        font-size: 1.1rem;
+    }
+
+    .discussion-item {
+        padding: 16px;
+    }
 }
 </style>
