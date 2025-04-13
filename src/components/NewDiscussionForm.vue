@@ -50,7 +50,7 @@ onMounted(async () => {
 
 function post_or_modify(){
     if(props.modify){
-        post.contenu += 'EDIT: ' + to_be_edited.value;
+        post.contenu += ' EDIT: ' + to_be_edited.value;
         postModification(post, router, route.params.id)
     }
     else{

@@ -17,7 +17,7 @@ var post = reactive({
   titre: "something is wrong",
   date: Date().now,
   topic: [],
-  auteur: "yassine",
+  auteur: "ibhi",
 });
 
 onMounted(async () => {
@@ -73,7 +73,7 @@ let date_string = computed(() => {
             <span class="material-icons">reply</span>
             Reply
           </div>
-          <DiscussionSetting class="z-2" :id="post.id" :username="post.auteur" />
+          <DiscussionSetting :id="post.id" :username="post.auteur" />
         </div>
 
         <reply-modal
