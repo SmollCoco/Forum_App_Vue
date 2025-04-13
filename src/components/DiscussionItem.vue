@@ -71,8 +71,8 @@ let show_response = ref(false);
                         <topic-item :topic="i" />
                     </div>
                 </div>
-                <div class="fs-3 fw-bold div-link">{{ titre }}</div>
-                <div>{{ preview }}</div>
+                <div class="fs-3 fw-bold div-link title">{{ titre }}</div>
+                <div class="preview">{{ preview }}</div>
             </div>
         </router-link>
         <div class="w-100 d-flex gap-lg-2 justify-content-between rounded p-2">
@@ -95,6 +95,24 @@ let show_response = ref(false);
 </template>
 
 <style scoped>
+::v-deep(a.r-link) {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+::v-deep(a.r-link:hover) {
+  text-decoration: none !important;
+}
+.preview {
+    color: #636466;
+    text-decoration: none !important;
+}
+.title {
+    color: #B92B27;
+    text-decoration: underline;
+    text-decoration-color: #B92B27;
+}
+
 .link {
     font-weight: 500;
     color: black;
@@ -102,7 +120,7 @@ let show_response = ref(false);
 }
 
 .link:hover {
-    color: rgb(10, 73, 209);
+  color: #B92B27;
 }
 
 /* Header styling */
@@ -161,7 +179,8 @@ let show_response = ref(false);
     align-items: center;
     gap: 4px;
     font-weight: bold;
-    background-color: rgb(219, 219, 219);
+    background-color: #2B2B2B ;
+    color: #ffffff;
     padding: 8px 12px;
     border-radius: 999px;
     cursor: pointer;
@@ -169,7 +188,7 @@ let show_response = ref(false);
 }
 
 .reply-btn:hover {
-    background-color: black;
+    background-color: #7c7d7d;
     color: white;
 }
 

@@ -127,15 +127,16 @@ const logout = async () => {
     </div>
 </template>
 
+// ... existing code ...
 <style scoped>
 .navbar {
-    background-color: white;
-    border-bottom: 1px solid var(--border-color);
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E2E2E2;
     padding: 10px 20px;
 }
 
 button:hover {
-    background-color: var(--danger-hover);
+    background-color: #A52622;
 }
 
 .btn {
@@ -148,11 +149,62 @@ button:hover {
 
 .fx-w {
     position: relative;
-    background-color: rgb(219, 219, 219);
+    background-color: #F1F2F2;
 }
 
 .fx-w:hover {
-    background-color: black;
-    color: white;
+    background-color: #2B2B2B;
+    color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: #B92B27;
+    border-color: #B92B27;
+}
+
+.btn-primary:hover {
+    background-color: #A52622;
+    border-color: #A52622;
+}
+
+.btn-secondary {
+    background-color: #636466;
+    border-color: #636466;
+}
+
+.btn-secondary:hover {
+    background-color: #2B2B2B;
+    border-color: #2B2B2B;
+}
+
+.btn-success {
+    background-color: #2E7D32;
+    border-color: #2E7D32;
+}
+
+.btn-success:hover {
+    background-color: #1B5E20;
+    border-color: #1B5E20;
+}
+
+.btn-warning {
+    background-color: #F57C00;
+    border-color: #F57C00;
+}
+
+.btn-warning:hover {
+    background-color: #E65100;
+    border-color: #E65100;
+}
+
+.btn-danger {
+    background-color: #B92B27;
+    border-color: #B92B27;
+}
+
+.btn-danger:hover {
+    background-color: #A52622;
+    border-color: #A52622;
 }
 </style>
+// ... existing code ...
