@@ -1,10 +1,12 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { postDiscussion } from '@/composables/PostDiscussion';
+import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { postDiscussion, postModification } from '@/composables/PostDiscussion';
 import TopicItem from './TopicItem.vue';
+import { getdiscId } from '@/composables/getDisc_Id';
 
+const route = useRoute();
 const router = useRouter();
 
 const props = defineProps({
@@ -27,6 +29,7 @@ let post = reactive({
 });
 
 let topic_stream = ref("");
+let to_be_edited = ref("");
 
 function check_input(key) {
     console.log("Great")
@@ -35,6 +38,24 @@ function check_input(key) {
         topic_stream.value = "";
     }
     console.log(post);
+}
+
+onMounted(async () => {
+    if (props.modify) {
+        let id = route.params.id;
+        const fetchedPost = await getdiscId(id);
+        Object.assign(post, fetchedPost);
+    }
+})
+
+function post_or_modify(){
+    if(props.modify){
+        post.contenu += 'EDIT: ' + to_be_edited.value;
+        postModification(post, router, route.params.id)
+    }
+    else{
+        postDiscussion(post, router)
+    }
 }
 
 </script>
@@ -61,17 +82,35 @@ function check_input(key) {
                 </div>
                 <!--Here we add the title-->
                 <div>
-                    <input type="text" id="title" class="form-control rounded-pill p-4" placeholder="Add title"
-                        v-model="post.titre">
+                    <input v-if="!modify" type="text" id="title" class="form-control rounded-pill p-4"
+                        placeholder="Add title" v-model="post.titre">
+                    <div v-else id="title" class="form-control rounded-pill p-4 my-3">
+                        {{ post.titre }}
+                        <span class="fs-6 text-danger d-block"> | you can't modify the title</span>
+                    </div>
                 </div>
                 <!--Here we add the content-->
-                <div class="form-floating">
+                <div class="form-floating" v-if="!modify">
                     <textarea class="form-control" placeholder="What do you want us to know about you?"
                         id="floatingTextarea2" style="height: 300px" v-model="post.contenu"></textarea>
                     <label for="floatingTextarea2">Comments</label>
                 </div>
+                <div v-else>
+                    <div class="rounded border mb-4 p-4 fw-semibold fs-6">
+                        <span class="text-primary mb-1 d-block">Your previous content. To preserve integrity you are
+                            only able to add text</span>
+                        <br>
+                        {{ post.contenu }}
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="What do you want us to know about you?"
+                            id="floatingTextarea2" style="height: 300px" v-model="to_be_edited"></textarea>
+                        <label for="floatingTextarea2">Edit as you wish</label>
+                    </div>
+                </div>
                 <!--Here we add the submission button-->
-                <input type="button" class="btn rounded-pill fw-bold fx-w" value="Submit" :disabled="!post.titre" @click="postDiscussion(post, router)">
+                <input type="button" class="btn rounded-pill fw-bold fx-w mt-3" value="Submit" :disabled="!post.titre"
+                    @click="post_or_modify">
             </form>
         </div>
     </div>

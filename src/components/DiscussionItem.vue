@@ -3,6 +3,7 @@
 import { ref, computed } from "vue";
 import TopicItem from "./TopicItem.vue";
 import ReplyModal from "./ReplyModal.vue";
+import ModifyButton from "./ModifyButton.vue";
 import { get_date_string } from "../composables/dateString";
 const props = defineProps({
     id: {
@@ -75,6 +76,7 @@ let show_response = ref(false);
         >
             Reply
         </div>
+        <modify-button :username="auteur" :id="id"/>
         <reply-modal
             v-if="show_response"
             :to_whom="auteur"

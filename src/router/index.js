@@ -61,7 +61,7 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/modify/:username',
+      path: '/modify/:username/:id', // username modifies the discussion `id`, ofc he needs to be its author
       name: 'ModifyPost',
       component: PostView,
       props: true,
