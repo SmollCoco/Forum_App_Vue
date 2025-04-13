@@ -56,9 +56,10 @@ let date_string = computed(() => { return get_date_string(props.date) });
                 <span style="color: gray; font-size: small;"> | {{ date_string }} | </span>
             </div>
             <div class="ms-lg-2 mb-2"> <router-link :to="`/profile/${parentName}`"> @{{ parentName }} </router-link> {{ contenu }} </div>
-            <div class="btn rounded-pill fw-bold fx-w" @click="show_response = !show_response">
-                Reply
+            <div class="btn rounded-pill fw-bold fx-w d-flex " @click="show_response = !show_response">
+                <span class="material-icons">reply</span>Reply
             </div>
+           
             <reply-modal v-if="show_response" :to_whom="auteur" :parent_id="id" :parent_depth="depth" @cancel="show_response = false" />
         </div>
     </div>
@@ -86,7 +87,7 @@ let date_string = computed(() => { return get_date_string(props.date) });
 
 .fx-w {
     font-size: 14px;
-    width: 60px;
+    width: 85px;
     position: relative;
     background-color: rgb(219, 219, 219);
 }
