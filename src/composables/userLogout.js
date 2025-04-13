@@ -9,7 +9,7 @@ const logout = async () => {
             await signOut(auth);
             console.log("User signed out");
             alert("Logged out");
-            router.push("/");
+            router.replace("/");
         } catch (error) {
             console.error("Error signing out:", error);
         }
