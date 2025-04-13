@@ -2,11 +2,13 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
-import AdminView from "../views/AdminView.vue";
 import DiscussionView from "../views/DiscussionView.vue";
 import ProfileView from "../views/ProfileView.vue";
+import PostView from "@/views/PostView.vue";
 import EditProfileView from "@/views/EditProfileView.vue";
+import AdminView from "@/views/AdminView.vue";
 import { auth } from "@/firebase";
+import { getUserInfo } from "@/composables/useUserInfo";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,7 +32,7 @@ const router = createRouter({
             path: "/profile/:username",
             name: "Profile",
             component: ProfileView,
-            props: true, // Pass the username as a prop to the ProfileView
+            props: true,
         },
         {
             path: "/profile/edit",
@@ -44,11 +46,24 @@ const router = createRouter({
         },
         {
             path: "/discussion/topic/:topic",
-            name: "Topic Discussions",
+            name: "TopicDiscussions",
             component: HomeView,
+            props: true,
         },
         {
-            path: "/Admin/:username",
+            path: "/submit/:username",
+            name: "CreatePost",
+            component: PostView,
+            props: true,
+        },
+        {
+            path: "/modify/:username/:id",
+            name: "ModifyPost",
+            component: PostView,
+            props: true,
+        },
+        {
+            path: "/admin",
             name: "Admin",
             component: AdminView,
         },
@@ -58,7 +73,22 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const isAuthenticated = !!auth.currentUser;
 
-    if (
+    if (to.name === "Admin") {
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const userInfo = await getUserInfo(user.displayName);
+                if (userInfo?.isAdmin) {
+                    next();
+                } else {
+                    alert("Access denied. Admins only.");
+                    next({ name: "Home" });
+                }
+            } else {
+                alert("You must be logged in to access this page.");
+                next({ name: "Login" });
+            }
+        });
+    } else if (
         (to.name === "EditProfile" || to.name === "Profile") &&
         !isAuthenticated
     ) {

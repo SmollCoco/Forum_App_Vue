@@ -26,7 +26,7 @@
                         />
                         <div class="profile-info">
                             <h2 class="profile-name">
-                                {{ userInfo.uid }}
+                                {{ userInfo.username }}
                             </h2>
                             <p class="profile-email">{{ userInfo.email }}</p>
                         </div>
@@ -97,7 +97,7 @@ import logout from "@/composables/userLogout";
 
 const route = useRoute();
 const router = useRouter();
-const username = route.params.uid; // Get username from route params
+const username = route.params.username; // Use username from route params
 const userInfo = ref(null);
 const discussions = ref([]);
 const loading = ref(true);
@@ -111,12 +111,12 @@ onMounted(async () => {
 
         // Fetch user info by username
         userInfo.value = await getUserInfo(username);
-
         if (!userInfo.value) {
             alert("User not found.");
             router.push("/"); // Redirect to home if user not found
             return;
         }
+        isLoggedIn.value = !!userInfo.value;
 
         // Fetch discussions authored by the user
         await fetchDiscussions();
@@ -125,7 +125,7 @@ onMounted(async () => {
         );
     } catch (error) {
         console.error("Error loading profile:", error);
-        alert("Failed to load profile. Please try again.");
+        alert("Failed to load profile.");
     } finally {
         loading.value = false;
     }
@@ -143,7 +143,7 @@ const handleLogout = async () => {
 
 // Navigate to edit profile
 const navigateToEditProfile = () => {
-    router.push("/profile/edit");
+    router.push(`/profile/edit`);
 };
 </script>
 

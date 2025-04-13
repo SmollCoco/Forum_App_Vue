@@ -7,8 +7,8 @@
         </div>
         <form @submit.prevent="handleLogin">
             <div class="formitem">
-                <label for="email"> Email: </label>
-                <input type="email" id="email" v-model="email" required />
+                <label for="username"> Username: </label>
+                <input type="text" id="username" v-model="username" required />
             </div>
             <div class="formitem">
                 <label for="password"> Password: </label>
@@ -40,23 +40,16 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const email = ref("");
+const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
 
 const handleLogin = async () => {
     try {
-        await loginUser(email.value, password.value);
+        await loginUser(username.value, password.value);
         alert("Login successful!");
-
-        try {
-            await router.push("/");
-        } catch (navError) {
-            console.error("Navigation failed:", navError);
-            alert("Redirect failed, please try manual navigation");
-        }
+        router.push(`/profile/${username.value}`);
     } catch (loginError) {
-        markInvalidInputs();
         console.error("Login failed:", loginError);
         alert("Login failed. Please check your credentials.");
     }
@@ -65,27 +58,45 @@ const handleLogin = async () => {
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
 };
-
-const markInvalidInputs = () => {
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    emailInput.style.borderColor = "red";
-    passwordInput.style.borderColor = "red";
-    emailInput.value = "";
-    passwordInput.value = "";
-};
 </script>
 
 <style scoped>
 form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    margin: 10% auto;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
     padding: 20px;
-    gap: 50px;
-    border: 2px solid #ccc;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
 }
+
+form div {
+    margin-bottom: 16px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
 .formitem {
     display: flex;
     flex-direction: column;
@@ -95,17 +106,6 @@ form {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-button {
-    padding: 10px;
-    background-color: #25699f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-button:hover {
-    background-color: #858d95;
 }
 .toggle-password {
     background: none;

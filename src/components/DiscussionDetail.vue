@@ -50,7 +50,7 @@ let date_string = computed(() => {
         <div class="w-75 bg-opacity-10 bg-black">
             <div class="m-2 p-2 rounded border border-black">
                 <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
-                    <!--Header containing the author, the topics and the date-->
+                    <!-- Header containing the author, the topics, and the date -->
                     <div class="d-flex align-items-center gap-lg-2 z-1">
                         <router-link
                             :to="`/profile/${auteur}`"
@@ -70,12 +70,12 @@ let date_string = computed(() => {
                     <div class="fs-3 fw-bold div-link">{{ titre }}</div>
                     <div>{{ contenu }}</div>
                 </div>
-                <div
+                <button
                     class="btn rounded-pill fw-bold fx-w"
                     @click="show_response = !show_response"
                 >
                     Reply
-                </div>
+                </button>
                 <reply-modal
                     v-if="show_response"
                     :to_whom="auteur"
@@ -83,7 +83,7 @@ let date_string = computed(() => {
                     @cancel="show_response = false"
                 />
             </div>
-            <DiscussionReplies :id="'dsW0XbdMJPCrv2Ye0Aoq'" />
+            <DiscussionReplies :id="id" />
         </div>
     </div>
 </template>
@@ -97,13 +97,6 @@ let date_string = computed(() => {
 
 .link:hover {
     color: rgb(10, 73, 209);
-}
-
-.r-link {
-    font-weight: 500;
-    color: black;
-    text-decoration: none;
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .fx-w {

@@ -1,5 +1,5 @@
 import { auth, db } from "@/firebase";
-import { deleteUser, signOut, updateEmail } from "firebase/auth";
+import { deleteUser, signOut, updateEmail, updateProfile } from "firebase/auth";
 import {
     doc,
     deleteDoc,
@@ -9,6 +9,8 @@ import {
     where,
     getDocs,
     writeBatch,
+    getDoc,
+    setDoc,
 } from "firebase/firestore";
 
 /**
@@ -21,13 +23,14 @@ export async function deleteUserAccount() {
         throw new Error("No user is currently logged in.");
     }
 
-    const userDocRef = doc(db, "users", user.uid);
+    const username = user.displayName; // Use the username as the identifier
+    const userDocRef = doc(db, "users", username);
 
     try {
         // Delete all discussions authored by the user
         const discussionsQuery = query(
             collection(db, "discussions"),
-            where("auteur", "==", user.displayName || user.email)
+            where("auteur", "==", username)
         );
         const discussionsSnapshot = await getDocs(discussionsQuery);
 
@@ -68,10 +71,11 @@ export async function updateProfileInfo({ name, email, profilePicture }) {
         throw new Error("No user is currently logged in.");
     }
 
-    const userDocRef = doc(db, "users", user.uid);
+    const currentUsername = user.displayName; // Current username
+    const userDocRef = doc(db, "users", currentUsername);
 
     const updates = {};
-    if (name) updates.name = name;
+    if (name) updates.username = name; // Update username in Firestore
     if (email) updates.email = email;
     if (profilePicture) updates.pfp = profilePicture;
 
@@ -79,16 +83,24 @@ export async function updateProfileInfo({ name, email, profilePicture }) {
         // Update Firestore user document
         await updateDoc(userDocRef, updates);
 
-        // Update email in Firebase Auth if provided
-        if (email) {
-            await updateEmail(user, email);
-        }
+        // If the username is being updated, rename the Firestore document
+        if (name && name !== currentUsername) {
+            const newUserDocRef = doc(db, "users", name);
 
-        // Update the author's name in all discussions
-        if (name) {
+            // Copy the existing document to the new username
+            const userSnapshot = await getDoc(userDocRef);
+            if (userSnapshot.exists()) {
+                await setDoc(newUserDocRef, userSnapshot.data());
+                await deleteDoc(userDocRef); // Delete the old document
+            }
+
+            // Update the username in Firebase Auth
+            await updateProfile(user, { displayName: name });
+
+            // Update the author's name in all discussions
             const discussionsQuery = query(
                 collection(db, "discussions"),
-                where("auteur", "==", user.displayName || user.email)
+                where("auteur", "==", currentUsername)
             );
             const discussionsSnapshot = await getDocs(discussionsQuery);
             const batch = writeBatch(db);
@@ -96,6 +108,11 @@ export async function updateProfileInfo({ name, email, profilePicture }) {
                 batch.update(doc.ref, { auteur: name });
             });
             await batch.commit();
+        }
+
+        // Update email in Firebase Auth if provided
+        if (email) {
+            await updateEmail(user, email);
         }
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {

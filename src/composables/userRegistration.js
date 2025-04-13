@@ -14,10 +14,10 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 export async function registerUser(email, password, username, pfp) {
     try {
         // Check if the username is unique
-        const userDocRef = doc(db, "users", username);
-        const userSnapshot = await getDoc(userDocRef);
+        const usernameDocRef = doc(db, "usernames", username);
+        const usernameSnapshot = await getDoc(usernameDocRef);
 
-        if (userSnapshot.exists()) {
+        if (usernameSnapshot.exists()) {
             throw new Error(
                 "This username is already taken. Please choose a different one."
             );
@@ -34,12 +34,18 @@ export async function registerUser(email, password, username, pfp) {
         // Set the displayName in Firebase Authentication
         await updateProfile(user, { displayName: username });
 
+        // Add the username mapping to Firestore
+        await setDoc(usernameDocRef, {
+            uid: username, // Use the username as the unique identifier
+        });
+
         // Add the user to the Firestore database with `username` as the document ID
+        const userDocRef = doc(db, "users", username);
         await setDoc(userDocRef, {
             email: email,
-            uid: user.uid,
+            username: username,
             pfp: pfp,
-            isAdmin: false,
+            isAdmin: false, // Default to false; set to true for admins manually
             createdAt: serverTimestamp(),
         });
 

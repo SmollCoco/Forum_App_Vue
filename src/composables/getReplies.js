@@ -1,5 +1,7 @@
 import { useStore } from "./getDiscussions";
 
+const visited = new Set();
+
 export async function getReplies(idref, replies = []) {
     const { discussions, fetchDiscussions } = useStore();
 
@@ -8,8 +10,8 @@ export async function getReplies(idref, replies = []) {
     }
 
     for (let disc of discussions.value) {
-        if (disc.parent === idref) {
-            // Fixed parent check
+        if (disc.parent === idref && !visited.has(disc.id)) {
+            visited.add(disc.id);
             replies.push(disc);
             await getReplies(disc.id, replies);
         }

@@ -20,7 +20,7 @@
             </div>
             <div>
                 <label>Username</label>
-                <input v-model="username" type="text" />
+                <input v-model="username" type="text" required />
             </div>
             <div>
                 <label>Profile Picture</label>
@@ -46,8 +46,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { registerUser } from "@/composables/userRegistration";
 import { useRouter } from "vue-router";
+import { registerUser } from "@/composables/userRegistration";
 import { uploadToGitHub } from "@/composables/uploadToGitHub";
 
 const email = ref("");
@@ -58,9 +58,9 @@ const profilePicture = ref(null);
 const errorMessage = ref("");
 const loading = ref(false);
 const isUploading = ref(false);
-const router = useRouter();
 
 const DEFAULT_PROFILE_PICTURE = "@/src/assets/user.png";
+const router = useRouter();
 
 const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -79,7 +79,9 @@ const handleFileUpload = async (event) => {
         }
         isUploading.value = true;
         try {
-            const fileName = `profile-${Date.now()}-${Math.random().toString(36).substring(2, 15)}.jpg`;
+            const fileName = `profile-${Date.now()}-${Math.random()
+                .toString(36)
+                .substring(2, 15)}.jpg`;
             profilePicture.value = await uploadToGitHub(file, fileName);
             console.log("Uploaded image URL:", profilePicture.value);
         } catch (error) {
@@ -100,53 +102,27 @@ const handleFileUpload = async (event) => {
 };
 
 const handleRegister = async () => {
-    const finalProfilePicture = profilePicture.value || DEFAULT_PROFILE_PICTURE;
-    errorMessage.value = "";
-    loading.value = true;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.value)) {
-        errorMessage.value = "Please enter a valid email address.";
-        loading.value = false;
-        return;
-    }
-
     if (password.value !== confirmPassword.value) {
-        errorMessage.value =
-            "Passwords do not match. Please re-enter your password.";
-        loading.value = false;
+        errorMessage.value = "Passwords do not match.";
         return;
     }
 
-    const usernameRegex = /^[a-zA-Z0-9._]+$/;
-    if (!usernameRegex.test(username.value)) {
-        errorMessage.value =
-            "Username should only contain letters, numbers, dots, or underscores.";
-        loading.value = false;
-        return;
-    }
-
-    console.log("Registering user with:", {
-        email: email.value,
-        password: password.value,
-        username: username.value,
-        profilePicture: finalProfilePicture,
-    });
+    loading.value = true;
+    errorMessage.value = "";
 
     try {
+        // eslint-disable-next-line no-unused-vars
         const user = await registerUser(
             email.value,
             password.value,
             username.value,
-            finalProfilePicture
+            profilePicture.value || DEFAULT_PROFILE_PICTURE
         );
-        console.log("User created:", user);
         alert("Account created successfully!");
         router.push(`/profile/${username.value}`);
-    } catch (err) {
-        console.error("Registration error:", err);
-        errorMessage.value =
-            err.message || "Failed to create account. Please try again.";
+    } catch (error) {
+        console.error("Registration error:", error);
+        errorMessage.value = error.message || "Failed to create account.";
     } finally {
         loading.value = false;
     }
@@ -155,59 +131,39 @@ const handleRegister = async () => {
 
 <style scoped>
 form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    margin: 2% auto;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
     padding: 20px;
-    gap: 20px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
 }
 
 form div {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    margin-bottom: 16px;
 }
 
-input[type="email"],
-input[type="password"],
-input[type="text"],
-input[type="file"] {
+input {
+    width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
-    font-size: 14px;
-}
-
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="text"]:focus,
-input[type="file"]:focus {
-    outline: none;
-    border-color: #25699f;
-    box-shadow: 0 0 5px rgba(37, 105, 159, 0.5);
 }
 
 button {
+    width: 100%;
     padding: 10px;
-    background-color: #25699f;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    font-weight: bold;
 }
 
 button:hover {
-    background-color: #858d95;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    background-color: var(--primary-hover);
 }
 
 .profile-preview {

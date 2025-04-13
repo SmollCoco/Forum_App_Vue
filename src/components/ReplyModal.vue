@@ -47,7 +47,7 @@ auth.onAuthStateChanged(async (user) => {
                 type="button"
                 class="rounded-pill btn"
                 :class="user_connected ? 'btn-dark' : 'btn-danger'"
-                :disabled="reply_text == '' && !user_connected"
+                :disabled="reply_text.trim() === '' || !user_connected"
                 @click="
                     post_reply(router, route, author, parent_id, reply_text)
                 "
@@ -68,5 +68,12 @@ auth.onAuthStateChanged(async (user) => {
 <style scoped>
 .border {
     border: solid grey;
+}
+button:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+    border: 1px solid #d0d0d0;
+    opacity: 0.6;
 }
 </style>

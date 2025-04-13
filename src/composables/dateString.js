@@ -1,19 +1,16 @@
 export function get_date_string(date) {
-  const timestamp = date;
+    if (!date || typeof date.seconds !== "number") {
+        return "Invalid date";
+    }
 
-  if (timestamp && typeof timestamp.seconds === "number") {
-    const jsDate = new Date(timestamp.seconds * 1000);
-
+    const jsDate = new Date(date.seconds * 1000);
     return jsDate.toLocaleString("fr-FR", {
-      weekday: "long", // optionnel : "jeudi"
-      day: "2-digit", // "10"
-      month: "long", // "avril"
-      year: "numeric", // "2025"
-      hour: "2-digit", // "14"
-      minute: "2-digit", // "05"
-      hour12: false, // format 24h
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
     });
-  }
-
-  return "Date invalide";
-};
+}

@@ -4,6 +4,9 @@ import { ref, computed } from "vue";
 import TopicItem from "./TopicItem.vue";
 import ReplyModal from "./ReplyModal.vue";
 import { get_date_string } from "../composables/dateString";
+import DiscussionSetting from "./DiscussionSetting.vue";
+import { reportDiscussion } from "@/composables/SignalerDisc";
+
 const props = defineProps({
     id: {
         type: String,
@@ -46,39 +49,45 @@ let preview = computed(() => {
 });
 
 let show_response = ref(false);
+
+const handleReport = async () => {
+    await reportDiscussion(props.id);
+};
 </script>
 
 <template>
-    <div class="m-2 p-2 r-link">
-        <router-link :to="`/discussion/${id}`" class="r-link">
-            <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
-                <!--Header containing the author, the topics and the date-->
-                <div class="d-flex align-items-center gap-lg-2 z-1">
-                    <router-link
-                        :to="`/profile/${auteur}`"
-                        class="d-flex gap-2 text-decoration-none align-items-center"
-                    >
-                        <span class="d-block link div-link"
-                            >u/{{ auteur }}</span
-                        >
-                    </router-link>
-                    <span style="color: gray; font-size: small">
-                        | {{ date_string }} |
-                    </span>
-                    <div v-for="(topic, index) of topic" :key="index">
-                        <topic-item :topic="topic" />
-                    </div>
+    <div class="discussion-item">
+        <!-- Link to the discussion -->
+        <router-link :to="`/discussion/${id}`" class="discussion-link">
+            <div class="discussion-header">
+                <!-- Author and date -->
+                <router-link :to="`/profile/${auteur}`" class="author-link">
+                    <span class="author">u/{{ auteur }}</span>
+                </router-link>
+                <span class="date">| {{ date_string }} |</span>
+                <!-- Topics -->
+                <div class="topics">
+                    <topic-item
+                        v-for="(i, index) in topic"
+                        :key="index"
+                        :topic="i"
+                    />
                 </div>
-                <div class="fs-3 fw-bold div-link">{{ titre }}</div>
-                <div>{{ preview }}</div>
             </div>
+            <!-- Title and preview -->
+            <div class="discussion-title">{{ titre }}</div>
+            <div class="discussion-preview">{{ preview }}</div>
         </router-link>
-        <div
-            class="btn rounded-pill fw-bold fx-w"
-            @click="show_response = !show_response"
-        >
-            Reply
+
+        <!-- Actions: Reply and Settings -->
+        <div class="discussion-actions">
+            <button class="reply-btn" @click="show_response = !show_response">
+                Reply
+            </button>
+            <DiscussionSetting :id="id" :username="auteur" />
         </div>
+
+        <!-- Reply Modal -->
         <reply-modal
             v-if="show_response"
             :to_whom="auteur"
@@ -89,36 +98,90 @@ let show_response = ref(false);
 </template>
 
 <style scoped>
-.link {
-    font-weight: 500;
-    color: black;
+/* General styling for the discussion item */
+.discussion-item {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.discussion-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* Link styling */
+.discussion-link {
     text-decoration: none;
+    color: inherit;
 }
 
-.link:hover {
-    color: rgb(10, 73, 209);
+/* Header styling */
+.discussion-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
-.r-link {
-    font-weight: 500;
-    color: black;
+.author-link {
     text-decoration: none;
+    color: var(--primary-color);
 }
 
-.r-link:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.div-link:hover {
+.author-link:hover {
     text-decoration: underline;
 }
-.fx-w {
-    width: 75px;
-    position: relative;
-    background-color: rgb(219, 219, 219);
+
+.author {
+    font-weight: bold;
 }
-.fx-w:hover {
-    background-color: black;
+
+.date {
+    color: gray;
+    font-size: small;
+}
+
+.topics {
+    display: flex;
+    gap: 4px;
+}
+
+/* Title and preview styling */
+.discussion-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.discussion-preview {
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+/* Actions styling */
+.discussion-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.reply-btn {
+    background-color: var(--primary-color);
     color: white;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reply-btn:hover {
+    background-color: var(--primary-hover);
 }
 </style>
