@@ -13,7 +13,7 @@ import ReplyItem from './ReplyItem.vue'
 const replies = ref([]);  
 
 onMounted(async () => {
-    replies.value = await getReplies(props.id);
+    await getReplies(props.id, replies.value);
     console.log('Replies0', replies.value);
 });
 </script>
@@ -21,7 +21,7 @@ onMounted(async () => {
 <template>
     <div class="mx-3 p-1 border-left">
         <div v-for="(reply, index) of replies" :key="index">
-            <ReplyItem v-bind="reply" :parent_id="reply.parent.id"/>
+            <ReplyItem v-bind="reply"/>
         </div>
     </div>
 </template>

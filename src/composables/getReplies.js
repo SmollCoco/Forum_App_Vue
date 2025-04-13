@@ -1,23 +1,18 @@
 import { useStore } from "./getDiscussions";
 
-var replies = [];
-
-export async function getReplies(idref) {
+export async function getReplies(idref, replies = []) {
+  console.log(idref);
     const { discussions, fetchDiscussions } = useStore();
 
   if (discussions.value.length === 0) {
     await fetchDiscussions();
   }
-  console.log("Found discussions", discussions.value.length);
-  for (let disc of discussions.value.reverse()) {
-    console.log("discussion", disc, "idref", idref, "parent", disc.parent);
+  for (let disc of discussions.value) {
     if (disc.parent && disc.parent.id === idref) {
-      console.log("Condition is met");
       replies.push(disc);
-      await getReplies(disc.id);
+      await getReplies(disc.id, replies);
     }
     console.log("Condition is not met");
 
   }
-  return replies;
 }
