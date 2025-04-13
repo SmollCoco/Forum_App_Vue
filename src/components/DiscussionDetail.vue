@@ -19,6 +19,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { getAuth } from "firebase/auth";
+import { getUserInfo } from "@/composables/useUserInfo";
+import defaultPfp from "@/assets/user.png";
 
 let show_response = ref(false);
 
@@ -29,6 +31,8 @@ const discussion = ref({});
 const replies = ref([]);
 const newReply = ref("");
 const loading = ref(true);
+
+const userPfp = ref(defaultPfp);
 
 var post = reactive({
     id: route.params.id,
@@ -111,6 +115,20 @@ onMounted(async () => {
         post.date = response.date;
         post.topic = response.topic;
         post.auteur = response.auteur;
+
+        // Fetch user profile picture
+        getUserInfo(response.auteur)
+            .then((userInfo) => {
+                if (userInfo?.pfp) {
+                    userPfp.value = userInfo.pfp;
+                } else {
+                    userPfp.value = defaultPfp;
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching user profile picture:", error);
+                userPfp.value = defaultPfp;
+            });
     });
     console.log("post detail", post);
     await fetchDiscussion();
@@ -124,86 +142,208 @@ let date_string = computed(() => {
 </script>
 
 <template>
-    <div class="d-flex justify-content-center">
-        <div class="w-75 bg-opacity-10 bg-black rounded">
-            <div class="m-2 p-2 rounded border border-black">
-                <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
-                    <!--Header containing the author, the topics and the date-->
-                    <div class="d-flex align-items-center gap-lg-2 z-1">
-                        <router-link
-                            :to="`/profile/${post.auteur}`"
-                            class="d-flex gap-2 text-decoration-none align-items-center"
-                        >
-                            <img
-                                src="../assets/discussion.png"
-                                width="40"
-                                class="rounded-circle d-block"
-                            />
-                            <span class="d-block link div-link">
-                                u/{{ post.auteur }}
-                            </span>
-                        </router-link>
-                        <span style="color: gray; font-size: small">
-                            | {{ date_string }} |
-                        </span>
-                        <div v-for="(topic, index) of post.topic" :key="index">
-                            <topic-item :topic="topic" />
-                        </div>
-                    </div>
-                    <div class="fs-3 fw-bold div-link">{{ post.titre }}</div>
-                    <div>{{ post.contenu }}</div>
-                </div>
-                <div
-                    class="w-100 d-flex gap-lg-2 justify-content-between rounded p-2"
-                >
-                    <div
-                        class="reply-btn rounded-pill fw-bold fx-w h-25 align-self-end p-1 d-flex"
-                        @click="show_response = !show_response"
+    <div class="discussion-detail">
+        <div class="discussion-item">
+            <div class="discussion-content">
+                <!--Header containing the author, the topics and the date-->
+                <div class="discussion-header">
+                    <router-link
+                        :to="`/profile/${post.auteur}`"
+                        class="author-link"
                     >
-                        <span class="material-icons">reply</span>
-                        Reply
+                        <img
+                            :src="userPfp"
+                            width="32"
+                            height="32"
+                            class="profile-picture"
+                            alt="Profile"
+                            @error="userPfp = defaultPfp"
+                        />
+                        <span>u/{{ post.auteur }}</span>
+                    </router-link>
+                    <span class="date">{{ date_string }}</span>
+                    <div class="topics">
+                        <topic-item
+                            v-for="(topic, index) of post.topic"
+                            :key="index"
+                            :topic="topic"
+                        />
                     </div>
-                    <DiscussionSetting :id="post.id" :username="post.auteur" />
                 </div>
-
-                <reply-modal
-                    v-if="show_response"
-                    :to_whom="post.auteur"
-                    :parent_id="post.id"
-                    @cancel="show_response = false"
-                />
+                <h2 class="discussion-title">{{ post.titre }}</h2>
+                <div class="discussion-content-text">{{ post.contenu }}</div>
             </div>
-            <DiscussionReplies :id="post.id" />
+
+            <div class="discussion-actions">
+                <button
+                    class="reply-btn"
+                    @click="show_response = !show_response"
+                >
+                    <span class="material-icons">reply</span>
+                    Reply
+                </button>
+                <DiscussionSetting :id="post.id" :username="post.auteur" />
+            </div>
+
+            <reply-modal
+                v-if="show_response"
+                :to_whom="post.auteur"
+                :parent_id="post.id"
+                @cancel="show_response = false"
+            />
         </div>
+        <DiscussionReplies :id="post.id" />
     </div>
 </template>
 
 <style scoped>
-.link {
-    font-weight: 500;
-    color: black;
+.discussion-detail {
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.discussion-item {
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.discussion-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.discussion-content {
+    display: block;
     text-decoration: none;
+    color: inherit;
 }
 
-.link:hover {
-    color: rgb(10, 73, 209);
+.discussion-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
-.r-link {
-    font-weight: 500;
-    color: black;
+.author-link {
     text-decoration: none;
-    background-color: rgba(0, 0, 0, 0.05);
+    color: #b92b27;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.fx-w {
-    width: 90px;
-    position: relative;
-    background-color: rgb(219, 219, 219);
+.profile-picture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #b92b27;
+    transition: all 0.2s ease;
 }
 
-.fx-w:hover {
-    background-color: black;
-    color: white;
+.author-link:hover .profile-picture {
+    border-color: #a52622;
+    transform: scale(1.05);
+}
+
+.date {
+    color: #636466;
+    font-size: 0.9rem;
+}
+
+.topics {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.discussion-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #b92b27;
+    line-height: 1.3;
+    transition: color 0.2s ease;
+}
+
+.discussion-content-text {
+    color: #636466;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.discussion-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e2e2;
+}
+
+.reply-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    background-color: #f1f2f2;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    color: #2b2b2b;
+    border: none;
+}
+
+.reply-btn:hover {
+    background-color: #2b2b2b;
+    color: #ffffff;
+}
+
+.reply-btn .material-icons {
+    font-size: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .discussion-detail {
+        max-width: 900px;
+    }
+}
+
+@media (max-width: 992px) {
+    .discussion-detail {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 768px) {
+    .discussion-detail {
+        padding: 16px;
+        max-width: 100%;
+    }
+
+    .discussion-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .discussion-title {
+        font-size: 1.1rem;
+    }
+
+    .discussion-item {
+        padding: 16px;
+    }
 }
 </style>

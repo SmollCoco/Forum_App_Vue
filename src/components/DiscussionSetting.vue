@@ -2,11 +2,8 @@
 import { ref, watch } from "vue";
 import { DeleteDisc } from "../composables/SupDisc";
 import { auth } from "@/firebase";
-import { getUserInfo } from "@/composables/useUserInfo";
 import { useRouter } from "vue-router";
 import { useReport } from "@/composables/useReport";
-import { db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import ReportConfirmationModal from "./ReportConfirmationModal.vue";
 
 const optionsShow = ref(false);
@@ -32,19 +29,11 @@ watch(
     async () => {
         const user = auth.currentUser;
         if (user) {
-            const userInfo = await getUserInfo(user.displayName);
-            const userDoc = await getDoc(doc(db, "users", user.displayName));
-            const userRole = userDoc.data()?.role;
-
             // Disable edit if not the owner
             disable.value[0] = user.displayName !== props.username;
 
-            // Enable delete if user is owner, admin, or moderator
-            disable.value[1] = !(
-                user.displayName === props.username ||
-                userInfo?.isAdmin ||
-                userRole === "moderator"
-            );
+            // Only enable delete for the owner
+            disable.value[1] = user.displayName !== props.username;
         } else {
             disable.value = [true, true]; // Disable all actions if not logged in
         }

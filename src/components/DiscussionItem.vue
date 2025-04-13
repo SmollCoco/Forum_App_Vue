@@ -1,10 +1,12 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TopicItem from "./TopicItem.vue";
 import ReplyModal from "./ReplyModal.vue";
 import { get_date_string } from "../composables/dateString";
 import DiscussionSetting from "./DiscussionSetting.vue";
+import { getUserInfo } from "@/composables/useUserInfo";
+import defaultPfp from "@/assets/user.png";
 
 const props = defineProps({
     id: {
@@ -39,6 +41,20 @@ const props = defineProps({
     },
 });
 
+const userPfp = ref(defaultPfp);
+
+onMounted(async () => {
+    try {
+        const userInfo = await getUserInfo(props.auteur);
+        if (userInfo?.pfp) {
+            userPfp.value = userInfo.pfp;
+        }
+    } catch (error) {
+        console.error("Error fetching user profile picture:", error);
+        userPfp.value = defaultPfp;
+    }
+});
+
 let date_string = computed(() => {
     return get_date_string(props.date);
 });
@@ -56,6 +72,14 @@ let show_response = ref(false);
             <!--Header containing the author, the topics and the date-->
             <div class="discussion-header">
                 <router-link :to="`/profile/${auteur}`" class="author-link">
+                    <img
+                        :src="userPfp"
+                        width="32"
+                        height="32"
+                        class="profile-picture"
+                        alt="Profile"
+                        @error="userPfp = defaultPfp"
+                    />
                     <span>u/{{ auteur }}</span>
                 </router-link>
                 <span class="date">{{ date_string }}</span>
@@ -122,10 +146,23 @@ let show_response = ref(false);
     color: #b92b27;
     font-weight: 500;
     transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.author-link:hover {
-    color: #a52622;
+.profile-picture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #b92b27;
+    transition: all 0.2s ease;
+}
+
+.author-link:hover .profile-picture {
+    border-color: #a52622;
+    transform: scale(1.05);
 }
 
 .date {

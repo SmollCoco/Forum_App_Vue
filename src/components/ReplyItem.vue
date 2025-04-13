@@ -1,10 +1,15 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { get_date_string } from "../composables/dateString";
 import ReplyModal from "./ReplyModal.vue";
 import { viewDepthKey } from "vue-router";
+import { getUserInfo } from "@/composables/useUserInfo";
+import defaultPfp from "@/assets/user.png";
+
 let show_response = ref(false);
+const userPfp = ref(defaultPfp);
+
 const props = defineProps({
     id: {
         type: String,
@@ -40,6 +45,20 @@ const props = defineProps({
     },
 });
 
+onMounted(async () => {
+    try {
+        const userInfo = await getUserInfo(props.auteur);
+        if (userInfo?.pfp) {
+            userPfp.value = userInfo.pfp;
+        } else {
+            userPfp.value = defaultPfp;
+        }
+    } catch (error) {
+        console.error("Error fetching user profile picture:", error);
+        userPfp.value = defaultPfp;
+    }
+});
+
 let date_string = computed(() => {
     return get_date_string(props.date);
 });
@@ -58,9 +77,12 @@ let date_string = computed(() => {
                     class="d-flex gap-1 text-decoration-none align-items-center"
                 >
                     <img
-                        src="../assets/discussion.png"
-                        width="25"
-                        class="rounded-circle d-block"
+                        :src="userPfp"
+                        width="32"
+                        height="32"
+                        class="profile-picture"
+                        alt="Profile"
+                        @error="userPfp = defaultPfp"
                     />
                     <span class="d-block link div-link"> u/{{ auteur }} </span>
                 </router-link>
@@ -122,5 +144,19 @@ let date_string = computed(() => {
 .fx-w:hover {
     background-color: black;
     color: white;
+}
+
+.profile-picture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #b92b27;
+    transition: all 0.2s ease;
+}
+
+.r-link:hover .profile-picture {
+    border-color: #a52622;
+    transform: scale(1.05);
 }
 </style>

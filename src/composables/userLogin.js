@@ -1,44 +1,39 @@
-import { auth, db } from "@/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { db, auth } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
+/**
+ * Logs in a user using their username and password.
+ * @param {string} username - The user's username.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Object>} - The logged-in user object.
+ * @throws {Error} - If login fails or user data is not found.
+ */
 export async function loginUser(username, password) {
     try {
-        // Validate input values
-        if (!username || username.trim() === "") {
-            throw new Error("Username cannot be empty.");
-        }
-        if (!password || password.trim() === "") {
-            throw new Error("Password cannot be empty.");
-        }
-
-        // Query Firestore to find the user document by username
+        // First, get the user document to find their email
         const userDocRef = doc(db, "users", username);
-        const userSnapshot = await getDoc(userDocRef);
+        const userDoc = await getDoc(userDocRef);
 
-        if (!userSnapshot.exists()) {
-            throw new Error("No user found with the provided username.");
+        if (!userDoc.exists()) {
+            throw new Error("User not found.");
         }
 
-        // Get the user's email from the Firestore document
-        const userData = userSnapshot.data();
-        const email = userData.email;
+        const userData = userDoc.data();
 
-        if (!email) {
-            throw new Error("No email associated with this username.");
-        }
-
-        // Sign in the user with the retrieved email and provided password
+        // Use the email from the user document to sign in
         const userCredential = await signInWithEmailAndPassword(
             auth,
-            email,
+            userData.email,
             password
         );
-        const user = userCredential.user;
 
-        return user;
+        return {
+            ...userData,
+            uid: userCredential.user.uid,
+        };
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Error in loginUser:", error);
         throw error;
     }
 }

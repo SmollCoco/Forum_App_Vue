@@ -2,9 +2,9 @@
     <div class="admin-panel">
         <h2>Admin Panel</h2>
 
-        <!-- Moderator Management -->
+        <!-- User Management -->
         <div class="section">
-            <h3>Moderator Management</h3>
+            <h3>User Management</h3>
             <div class="search-box">
                 <input
                     v-model="searchUser"
@@ -21,24 +21,13 @@
                 >
                     <div class="user-info">
                         <span>{{ user.displayName }}</span>
-                        <span class="user-role">{{ user.role || "user" }}</span>
+                        <span class="user-role">{{
+                            user.isAdmin ? "Admin" : "User"
+                        }}</span>
                     </div>
                     <div class="user-actions">
                         <button
-                            v-if="user.role !== 'admin'"
-                            @click="toggleModerator(user.id)"
-                            :class="{
-                                'is-moderator': user.role === 'moderator',
-                            }"
-                        >
-                            {{
-                                user.role === "moderator"
-                                    ? "Remove Moderator"
-                                    : "Make Moderator"
-                            }}
-                        </button>
-                        <button
-                            v-if="user.role !== 'admin'"
+                            v-if="!user.isAdmin"
                             @click="makeAdmin(user.id)"
                             class="make-admin-btn"
                         >
@@ -144,28 +133,16 @@ const searchUsers = async () => {
         .map((username) => ({
             id: username,
             displayName: username,
-            isAdmin: false, // Default role, will be updated when user data is fetched
+            isAdmin: false, // Default value, will be updated when user data is fetched
         }));
 
-    // Fetch role information for each user
+    // Fetch admin status for each user
     for (const user of searchResults.value) {
         const userDoc = await getDoc(doc(db, "users", user.displayName));
         if (userDoc.exists()) {
-            user.role = userDoc.data().isAdmin;
+            user.isAdmin = userDoc.data().isAdmin || false;
         }
     }
-};
-
-const toggleModerator = async (userId) => {
-    const userRef = doc(db, "users", userId);
-    const user = searchResults.value.find((u) => u.id === userId);
-    const newRole = user.role === "moderator" ? "user" : "moderator";
-
-    await updateDoc(userRef, {
-        role: newRole,
-    });
-
-    user.role = newRole;
 };
 
 const makeAdmin = async (userId) => {
@@ -181,7 +158,7 @@ const makeAdmin = async (userId) => {
             isAdmin: true,
         });
 
-        user.role = "admin";
+        user.isAdmin = true;
         alert("User has been promoted to admin");
     }
 };
@@ -279,11 +256,6 @@ const dismissReport = async (messageId) => {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
-
-.user-item button.is-moderator {
-    background-color: #4caf50;
-    color: white;
 }
 
 .make-admin-btn {
