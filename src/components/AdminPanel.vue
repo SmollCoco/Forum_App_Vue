@@ -59,11 +59,9 @@
                     class="message-item"
                 >
                     <div class="message-content">
-                        <p><strong>Author:</strong> {{ message.authorName }}</p>
-                        <p><strong>Content:</strong> {{ message.content }}</p>
-                        <p>
-                            <strong>Reports:</strong> {{ message.reportCount }}
-                        </p>
+                        <p><strong>Author:</strong> {{ message.auteur }}</p>
+                        <p><strong>Content:</strong> {{ message.contenu }}</p>
+                        <p><strong>Reports:</strong> {{ message.reports }}</p>
                         <div
                             v-if="
                                 message.reportReasons &&
@@ -109,7 +107,7 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from "vue";
 import { db } from "../firebase";
 import {
@@ -120,111 +118,106 @@ import {
     updateDoc,
     doc,
     deleteDoc,
+    getDoc,
 } from "firebase/firestore";
+import { getUsers } from "../composables/getUsers";
 
-export default {
-    name: "AdminPanel",
-    setup() {
-        const searchUser = ref("");
-        const searchResults = ref([]);
-        const reportedMessages = ref([]);
+const { users, fetchUsers } = getUsers();
+const searchUser = ref("");
+const searchResults = ref([]);
+const reportedMessages = ref([]);
 
-        const searchUsers = async () => {
-            if (!searchUser.value) {
-                searchResults.value = [];
-                return;
-            }
+const searchUsers = async () => {
+    if (!searchUser.value) {
+        searchResults.value = [];
+        return;
+    }
 
-            const usersRef = collection(db, "users");
-            const q = query(
-                usersRef,
-                where("displayName", ">=", searchUser.value)
-            );
-            const querySnapshot = await getDocs(q);
+    // Fetch all users first
+    await fetchUsers();
 
-            searchResults.value = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-        };
+    // Filter users based on search term
+    searchResults.value = users.value
+        .filter((username) =>
+            username.toLowerCase().includes(searchUser.value.toLowerCase())
+        )
+        .map((username) => ({
+            id: username,
+            displayName: username,
+            isAdmin: false, // Default role, will be updated when user data is fetched
+        }));
 
-        const toggleModerator = async (userId) => {
-            const userRef = doc(db, "users", userId);
-            const user = searchResults.value.find((u) => u.id === userId);
+    // Fetch role information for each user
+    for (const user of searchResults.value) {
+        const userDoc = await getDoc(doc(db, "users", user.displayName));
+        if (userDoc.exists()) {
+            user.role = userDoc.data().isAdmin;
+        }
+    }
+};
 
-            await updateDoc(userRef, {
-                role: user.role === "moderator" ? "user" : "moderator",
-            });
+const toggleModerator = async (userId) => {
+    const userRef = doc(db, "users", userId);
+    const user = searchResults.value.find((u) => u.id === userId);
+    const newRole = user.role === "moderator" ? "user" : "moderator";
 
-            user.role = user.role === "moderator" ? "user" : "moderator";
-        };
+    await updateDoc(userRef, {
+        role: newRole,
+    });
 
-        const makeAdmin = async (userId) => {
-            if (
-                confirm(
-                    "Are you sure you want to make this user an admin? This action cannot be undone."
-                )
-            ) {
-                const userRef = doc(db, "users", userId);
-                const user = searchResults.value.find((u) => u.id === userId);
+    user.role = newRole;
+};
 
-                await updateDoc(userRef, {
-                    role: "admin",
-                });
+const makeAdmin = async (userId) => {
+    if (
+        confirm(
+            "Are you sure you want to make this user an admin? This action cannot be undone."
+        )
+    ) {
+        const userRef = doc(db, "users", userId);
+        const user = searchResults.value.find((u) => u.id === userId);
 
-                user.role = "admin";
-                alert("User has been promoted to admin");
-            }
-        };
-
-        const loadReportedMessages = async () => {
-            const messagesRef = collection(db, "discussions");
-            const q = query(messagesRef, where("reports", ">", 0));
-            const querySnapshot = await getDocs(q);
-
-            reportedMessages.value = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-        };
-
-        const deleteMessage = async (messageId) => {
-            if (confirm("Are you sure you want to delete this message?")) {
-                await deleteDoc(doc(db, "discussions", messageId));
-                reportedMessages.value = reportedMessages.value.filter(
-                    (m) => m.id !== messageId
-                );
-            }
-        };
-
-        const dismissReport = async (messageId) => {
-            const messageRef = doc(db, "discussions", messageId);
-            await updateDoc(messageRef, {
-                reports: 0,
-                lastReportedAt: null,
-                reportedBy: [],
-                reportReasons: [],
-            });
-            reportedMessages.value = reportedMessages.value.filter(
-                (m) => m.id !== messageId
-            );
-        };
-
-        onMounted(() => {
-            loadReportedMessages();
+        await updateDoc(userRef, {
+            isAdmin: true,
         });
 
-        return {
-            searchUser,
-            searchResults,
-            reportedMessages,
-            searchUsers,
-            toggleModerator,
-            makeAdmin,
-            deleteMessage,
-            dismissReport,
-        };
-    },
+        user.role = "admin";
+        alert("User has been promoted to admin");
+    }
+};
+
+const loadReportedMessages = async () => {
+    const messagesRef = collection(db, "discussions");
+    const q = query(messagesRef, where("reports", ">", 0));
+    const querySnapshot = await getDocs(q);
+    reportedMessages.value = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+};
+
+onMounted(loadReportedMessages);
+
+const deleteMessage = async (messageId) => {
+    if (confirm("Are you sure you want to delete this message?")) {
+        await deleteDoc(doc(db, "discussions", messageId));
+        reportedMessages.value = reportedMessages.value.filter(
+            (m) => m.id !== messageId
+        );
+    }
+};
+
+const dismissReport = async (messageId) => {
+    const messageRef = doc(db, "discussions", messageId);
+    await updateDoc(messageRef, {
+        reports: 0,
+        lastReportedAt: null,
+        reportedBy: [],
+        reportReasons: [],
+    });
+    reportedMessages.value = reportedMessages.value.filter(
+        (m) => m.id !== messageId
+    );
 };
 </script>
 

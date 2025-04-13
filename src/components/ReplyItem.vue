@@ -3,11 +3,11 @@
 import { ref, computed } from "vue";
 import { get_date_string } from "../composables/dateString";
 import ReplyModal from "./ReplyModal.vue";
+import { viewDepthKey } from "vue-router";
 let show_response = ref(false);
 const props = defineProps({
     id: {
         type: String,
-        required: true,
     },
     auteur: {
         type: String,
@@ -47,8 +47,11 @@ let date_string = computed(() => {
 
 <template>
     <div class="bg-white p-2 r-link">
-        <div class="w-100 d-flex gap-1 flex-column rounded">
-            <!-- Header containing the author, the topics, and the date -->
+        <div
+            class="d-flex gap-1 flex-column rounded"
+            :class="depth >= 1 ? 'ms-lg-4' : ''"
+        >
+            <!--Header containing the author, the topics and the date-->
             <div class="d-flex align-items-center gap-1 z-1">
                 <router-link
                     :to="`/profile/${auteur}`"
@@ -65,20 +68,27 @@ let date_string = computed(() => {
                     | {{ date_string }} |
                 </span>
             </div>
-            <div>{{ contenu }}</div>
+            <div class="ms-lg-2 mb-2">
+                <router-link :to="`/profile/${parentName}`">
+                    @{{ parentName }}
+                </router-link>
+                {{ contenu }}
+            </div>
+            <div
+                class="btn rounded-pill fw-bold fx-w d-flex"
+                @click="show_response = !show_response"
+            >
+                <span class="material-icons">reply</span>Reply
+            </div>
+
+            <reply-modal
+                v-if="show_response"
+                :to_whom="auteur"
+                :parent_id="id"
+                :parent_depth="depth"
+                @cancel="show_response = false"
+            />
         </div>
-        <button
-            class="btn rounded-pill fw-bold fx-w"
-            @click="show_response = !show_response"
-        >
-            Reply
-        </button>
-        <reply-modal
-            v-if="show_response"
-            :to_whom="auteur"
-            :parent_id="id"
-            @cancel="show_response = false"
-        />
     </div>
 </template>
 

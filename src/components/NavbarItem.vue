@@ -34,7 +34,7 @@ onAuthStateChanged(auth, async (user) => {
         }
 
         // Check if user is admin
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userDoc = await getDoc(doc(db, "users", user.displayName));
         if (userDoc.exists()) {
             isAdmin.value = userDoc.data().isAdmin === true;
             console.log("User is admin:", isAdmin.value); // Debug log
@@ -59,112 +59,129 @@ const logout = async () => {
 </script>
 
 <template>
-    <div
-        class="navbar navbar-expand d-flex justify-content-between p-3 border-bottom"
-    >
-        <!-- Logo -->
-        <div>
-            <router-link to="/">
-                <img src="../assets/logo.png" width="120px" alt="Logo" />
+    <nav class="navbar navbar-expand-lg fixed-top bg-white border-bottom">
+        <div class="container-fluid px-4">
+            <!-- Logo -->
+            <router-link class="navbar-brand" to="/">
+                <img src="../assets/logo.png" height="40" alt="Logo" />
             </router-link>
-        </div>
 
-        <!-- Search Bar -->
-        <search-bar class="my-2" />
-
-        <!-- User Actions -->
-        <div>
-            <div v-if="user_connected" class="d-flex gap-3">
-                <!-- Admin Panel Button -->
-                <router-link
-                    v-if="isAdmin"
-                    to="/admin"
-                    class="btn btn-warning rounded-pill text-white fw-bold"
-                >
-                    Admin Panel
-                </router-link>
-
-                <!-- Create Button -->
-                <router-link
-                    :to="`/submit/${currentUser?.displayName || 'user'}`"
-                    class="btn btn-secondary rounded-pill text-white fw-bold"
-                >
-                    Create
-                </router-link>
-
-                <!-- Profile Button -->
-                <router-link
-                    :to="`/profile/${currentUser?.displayName || 'user'}`"
-                    class="btn btn-primary rounded-pill text-white fw-bold"
-                >
-                    Profile
-                </router-link>
-                <button
-                    class="btn btn-danger rounded-pill fw-bold"
-                    @click="logout"
-                >
-                    Logout
-                </button>
+            <!-- Search Bar -->
+            <div class="search-wrapper flex-grow-1 mx-4">
+                <search-bar />
             </div>
-            <div v-else class="d-flex gap-3">
-                <!-- Login Button -->
-                <router-link
-                    to="/login"
-                    class="btn btn-primary rounded-pill text-white fw-bold"
-                >
-                    Login
-                </router-link>
 
-                <!-- Register Button -->
-                <router-link
-                    to="/register"
-                    class="btn btn-success rounded-pill text-white fw-bold"
-                >
-                    Register
-                </router-link>
+            <!-- User Actions -->
+            <div class="navbar-nav align-items-center">
+                <div v-if="user_connected" class="d-flex gap-2">
+                    <!-- Admin Panel Button -->
+                    <router-link
+                        v-if="isAdmin"
+                        to="/admin"
+                        class="btn btn-dark rounded-pill px-3"
+                    >
+                        <span class="material-icons align-middle me-1"
+                            >admin_panel_settings</span
+                        >
+                        Admin
+                    </router-link>
+
+                    <!-- Create Button -->
+                    <router-link
+                        :to="`/submit/${currentUser?.displayName || 'user'}`"
+                        class="btn btn-secondary rounded-pill px-3"
+                    >
+                        <span class="material-icons align-middle me-1"
+                            >add</span
+                        >
+                        Create
+                    </router-link>
+
+                    <!-- Profile Button -->
+                    <router-link
+                        :to="`/profile/${currentUser?.displayName || 'user'}`"
+                        class="btn btn-primary rounded-pill px-3"
+                    >
+                        <span class="material-icons align-middle me-1"
+                            >person</span
+                        >
+                        Profile
+                    </router-link>
+
+                    <!-- Logout Button -->
+                    <button
+                        class="btn btn-danger rounded-pill px-3"
+                        @click="logout"
+                    >
+                        <span class="material-icons align-middle me-1"
+                            >logout</span
+                        >
+                        Logout
+                    </button>
+                </div>
+                <div v-else class="d-flex gap-2">
+                    <!-- Login Button -->
+                    <router-link
+                        to="/login"
+                        class="btn btn-primary rounded-pill px-3"
+                    >
+                        <span class="material-icons align-middle me-1"
+                            >login</span
+                        >
+                        Login
+                    </router-link>
+
+                    <!-- Register Button -->
+                    <router-link
+                        to="/register"
+                        class="btn btn-success rounded-pill px-3"
+                    >
+                        <span class="material-icons align-middle me-1"
+                            >person_add</span
+                        >
+                        Register
+                    </router-link>
+                </div>
             </div>
         </div>
-    </div>
+    </nav>
 </template>
 
-// ... existing code ...
 <style scoped>
 .navbar {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E2E2E2;
-    padding: 10px 20px;
+    height: 64px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-button:hover {
-    background-color: #A52622;
+.search-wrapper {
+    max-width: 600px;
+    min-width: 200px;
 }
 
 .btn {
-    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
-.fx-w {
-    position: relative;
-    background-color: #F1F2F2;
-}
-
-.fx-w:hover {
-    background-color: #2B2B2B;
-    color: #FFFFFF;
+.material-icons {
+    font-size: 20px;
 }
 
 .btn-primary {
-    background-color: #B92B27;
-    border-color: #B92B27;
+    background-color: #b92b27;
+    border-color: #b92b27;
 }
 
 .btn-primary:hover {
-    background-color: #A52622;
-    border-color: #A52622;
+    background-color: #a52622;
+    border-color: #a52622;
 }
 
 .btn-secondary {
@@ -173,38 +190,60 @@ button:hover {
 }
 
 .btn-secondary:hover {
-    background-color: #2B2B2B;
-    border-color: #2B2B2B;
+    background-color: #2b2b2b;
+    border-color: #2b2b2b;
 }
 
 .btn-success {
-    background-color: #2E7D32;
-    border-color: #2E7D32;
+    background-color: #7c7c7d;
+    border-color: #7c7c7d;
 }
 
 .btn-success:hover {
-    background-color: #1B5E20;
-    border-color: #1B5E20;
-}
-
-.btn-warning {
-    background-color: #F57C00;
-    border-color: #F57C00;
-}
-
-.btn-warning:hover {
-    background-color: #E65100;
-    border-color: #E65100;
+    background-color: #6b6b6c;
+    border-color: #6b6b6c;
 }
 
 .btn-danger {
-    background-color: #B92B27;
-    border-color: #B92B27;
+    background-color: #b92b27;
+    border-color: #b92b27;
 }
 
 .btn-danger:hover {
-    background-color: #A52622;
-    border-color: #A52622;
+    background-color: #a52622;
+    border-color: #a52622;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar {
+        height: auto;
+        padding: 12px 0;
+    }
+
+    .container-fluid {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-wrapper {
+        width: 100%;
+        max-width: none;
+        margin: 8px 0;
+    }
+
+    .navbar-nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .material-icons {
+        font-size: 18px;
+    }
 }
 </style>
-// ... existing code ...

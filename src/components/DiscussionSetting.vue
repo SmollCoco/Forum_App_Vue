@@ -33,7 +33,7 @@ watch(
         const user = auth.currentUser;
         if (user) {
             const userInfo = await getUserInfo(user.displayName);
-            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const userDoc = await getDoc(doc(db, "users", user.displayName));
             const userRole = userDoc.data()?.role;
 
             // Disable edit if not the owner
@@ -66,7 +66,7 @@ const handleReport = async () => {
     }
 
     console.log("Checking if user can report...");
-    const canUserReport = await canReport(user.uid, props.id);
+    const canUserReport = await canReport(user.displayName, props.id);
     console.log("Can user report:", canUserReport);
 
     if (!canUserReport) {
@@ -82,7 +82,7 @@ const handleReportConfirm = async (reason) => {
         console.log("Attempting to report content...");
         const success = await reportMessage(
             props.id,
-            auth.currentUser.uid,
+            auth.currentUser.displayName,
             reason
         );
         console.log("Report success:", success);
@@ -106,7 +106,7 @@ const handleReportCancel = () => {
 </script>
 
 <template>
-    <div class="d-flex flex-column">
+    <div class="settings-container">
         <div
             v-show="optionsShow"
             class="btn-group-vertical"
@@ -114,13 +114,10 @@ const handleReportCancel = () => {
             aria-label="Vertical button group"
         >
             <!-- Edit Button -->
-            <button
-                class="btn btn-outline-success d-flex border-black"
-                :disabled="disable[0]"
-            >
+            <button class="btn btn-outline-success" :disabled="disable[0]">
                 <RouterLink
                     :to="`/modify/${props.username}/${props.id}`"
-                    class="fw-bold text-black text-decoration-none d-flex"
+                    class="btn-link"
                 >
                     <span class="material-icons">edit</span>
                     Edit
@@ -130,7 +127,7 @@ const handleReportCancel = () => {
             <!-- Delete Button -->
             <button
                 type="button"
-                class="btn btn-outline-danger d-flex border-black"
+                class="btn btn-outline-danger"
                 :disabled="disable[1]"
                 @click="handleDelete"
             >
@@ -141,20 +138,17 @@ const handleReportCancel = () => {
             <!-- Report Button -->
             <button
                 type="button"
-                class="btn btn-outline-warning d-flex border-black"
+                class="btn btn-outline-warning"
                 @click="handleReport"
             >
                 <span class="material-icons">report</span>
                 Report
             </button>
         </div>
-        <div
-            class="btn rounded fw-bold fx-w d-flex"
-            @click="optionsShow = !optionsShow"
-        >
+        <button class="options-btn" @click="optionsShow = !optionsShow">
             <span class="material-icons">more_vert</span>
             Options
-        </div>
+        </button>
 
         <!-- Report Confirmation Modal -->
         <ReportConfirmationModal
@@ -166,22 +160,113 @@ const handleReportCancel = () => {
 </template>
 
 <style scoped>
-.fx-w {
-    width: 110px;
+.settings-container {
     position: relative;
-    background-color: rgb(219, 219, 219);
-}
-.fx-w:hover {
-    background-color: black;
-    color: white;
+    z-index: 100;
 }
 
-/* Ensure disabled buttons are grayed out */
+.options-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #f1f2f2;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    color: #2b2b2b;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 110px;
+}
+
+.options-btn:hover {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-group-vertical {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e2e2;
+    z-index: 1000;
+    min-width: 150px;
+    overflow: hidden;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: none;
+    text-align: left;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.btn:last-child {
+    border-bottom: none;
+}
+
+.btn-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+}
+
+.btn-outline-success {
+    color: #2e7d32;
+}
+
+.btn-outline-success:hover {
+    background-color: #e8f5e9;
+}
+
+.btn-outline-danger {
+    color: #b92b27;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ffebee;
+}
+
+.btn-outline-warning {
+    color: #f57c00;
+}
+
+.btn-outline-warning:hover {
+    background-color: #fff3e0;
+}
+
+.material-icons {
+    font-size: 20px;
+}
+
+/* Ensure disabled buttons are properly styled */
 button:disabled {
-    background-color: #e0e0e0;
-    color: #a0a0a0;
+    opacity: 0.5;
     cursor: not-allowed;
-    border: 1px solid #d0d0d0;
-    opacity: 0.6;
+}
+
+button:disabled:hover {
+    background: none;
+    transform: none;
+}
+
+button:disabled .btn-link {
+    pointer-events: none;
 }
 </style>

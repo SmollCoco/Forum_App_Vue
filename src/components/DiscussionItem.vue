@@ -51,40 +51,34 @@ let show_response = ref(false);
 </script>
 
 <template>
-    <div class="m-2 p-2 r-link">
-        <router-link :to="`/discussion/${id}`" class="r-link">
-            <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
-                <!--Header containing the author, the topics and the date-->
-                <div class="d-flex align-items-center z-1">
-                    <router-link
-                        :to="`/profile/${auteur}`"
-                        class="d-flex gap-2 text-decoration-none align-items-center"
-                    >
-                        <span class="d-block link div-link"
-                            >u/{{ auteur }}</span
-                        >
-                    </router-link>
-                    <span style="color: gray; font-size: small">
-                        | {{ date_string }} |
-                    </span>
-                    <div v-for="(i, index) of topic" :key="index">
-                        <topic-item :topic="i" />
-                    </div>
+    <div class="discussion-item">
+        <router-link :to="`/discussion/${id}`" class="discussion-content">
+            <!--Header containing the author, the topics and the date-->
+            <div class="discussion-header">
+                <router-link :to="`/profile/${auteur}`" class="author-link">
+                    <span>u/{{ auteur }}</span>
+                </router-link>
+                <span class="date">{{ date_string }}</span>
+                <div class="topics">
+                    <topic-item
+                        v-for="(i, index) of topic"
+                        :key="index"
+                        :topic="i"
+                    />
                 </div>
-                <div class="fs-3 fw-bold div-link title">{{ titre }}</div>
-                <div class="preview">{{ preview }}</div>
             </div>
+            <h2 class="discussion-title">{{ titre }}</h2>
+            <div class="discussion-preview">{{ preview }}</div>
         </router-link>
-        <div class="w-100 d-flex gap-lg-2 justify-content-between rounded p-2">
-            <div
-                class="reply-btn rounded-pill fw-bold fx-w h-25 align-self-end"
-                @click="show_response = !show_response"
-            >
+
+        <div class="discussion-actions">
+            <button class="reply-btn" @click="show_response = !show_response">
                 <span class="material-icons">reply</span>
                 Reply
-            </div>
-            <DiscussionSetting class="z-2" :id="id" :username="auteur" />
+            </button>
+            <DiscussionSetting :id="id" :username="auteur" />
         </div>
+
         <reply-modal
             v-if="show_response"
             :to_whom="auteur"
@@ -95,104 +89,120 @@ let show_response = ref(false);
 </template>
 
 <style scoped>
-::v-deep(a.r-link) {
-  text-decoration: none !important;
-  color: inherit;
+.discussion-item {
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
 }
 
-::v-deep(a.r-link:hover) {
-  text-decoration: none !important;
-}
-.preview {
-    color: #636466;
-    text-decoration: none !important;
-}
-.title {
-    color: #B92B27;
-    text-decoration: underline;
-    text-decoration-color: #B92B27;
+.discussion-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.link {
-    font-weight: 500;
-    color: black;
+.discussion-content {
+    display: block;
     text-decoration: none;
+    color: inherit;
 }
 
-.link:hover {
-  color: #B92B27;
-}
-
-/* Header styling */
 .discussion-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .author-link {
     text-decoration: none;
-    color: var(--primary-color);
+    color: #b92b27;
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
 
-.div-link:hover {
-    text-decoration: underline;
-}
-
-.author {
-    font-weight: bold;
+.author-link:hover {
+    color: #a52622;
 }
 
 .date {
-    color: gray;
-    font-size: small;
+    color: #636466;
+    font-size: 0.9rem;
 }
 
 .topics {
     display: flex;
-    gap: 4px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-/* Title and preview styling */
 .discussion-title {
     font-size: 1.25rem;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    color: #b92b27;
+    line-height: 1.3;
+    transition: color 0.2s ease;
+}
+
+.discussion-content:hover .discussion-title {
+    color: #a52622;
 }
 
 .discussion-preview {
-    color: var(--text-color);
+    color: #636466;
     font-size: 0.95rem;
+    line-height: 1.5;
 }
 
-/* Actions styling */
 .discussion-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e2e2;
 }
 
 .reply-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-weight: bold;
-    background-color: #2B2B2B ;
-    color: #ffffff;
-    padding: 8px 12px;
+    gap: 6px;
+    font-weight: 500;
+    background-color: #f1f2f2;
+    padding: 8px 16px;
     border-radius: 999px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    color: #2b2b2b;
+    border: none;
 }
 
 .reply-btn:hover {
-    background-color: #7c7d7d;
-    color: white;
+    background-color: #2b2b2b;
+    color: #ffffff;
 }
 
 .reply-btn .material-icons {
     font-size: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .discussion-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .discussion-title {
+        font-size: 1.1rem;
+    }
+
+    .discussion-item {
+        padding: 16px;
+    }
 }
 </style>

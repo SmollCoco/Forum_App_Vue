@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from "@/composables/getDiscussions";
 import SearchSuggestionItem from "./SearchSuggestionItem.vue";
+import { getUsers } from "@/composables/getUsers";
 
 const search_field = ref("");
 const cliick = ref(false);
@@ -9,9 +10,13 @@ const suggestionsRef = ref(null);
 const inputref = ref(null);
 
 const { discussions, fetchDiscussions } = useStore();
+const { users, fetchUsers } = getUsers();
 onMounted(() => {
     fetchDiscussions().then(() => {
         console.log("discussions récupérées", discussions.value);
+    });
+    fetchUsers().then(() => {
+        console.log("users recuperes");
     });
     document.addEventListener("click", handleClickOutside);
 });
@@ -35,15 +40,8 @@ const matchedAuthors = computed(() => {
     if (!search) return [];
 
     const seen = new Set();
-    return discussions.value.filter((disc) => {
-        const author = disc.auteur?.toLowerCase();
-        if (disc.topic && author?.includes(search)) {
-            if (!seen.has(author)) {
-                seen.add(author);
-                return true;
-            }
-        }
-        return false;
+    return users.value.filter((user) => {
+        return user.trim().toLowerCase().includes(search);
     });
 });
 
@@ -106,7 +104,7 @@ const handleBlur = () => {
                 <SearchSuggestionItem
                     v-for="(disc, index) in matchedAuthors"
                     :key="index"
-                    :value="disc.auteur"
+                    :value="disc"
                     type="User"
                 />
             </div>
@@ -136,7 +134,7 @@ const handleBlur = () => {
 .search-bar-container {
     position: absolute;
     top: 10px;
-    left: 50%;
+    left: 35%;
     transform: translateX(-50%);
     z-index: 1000;
 }

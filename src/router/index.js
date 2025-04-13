@@ -77,7 +77,9 @@ router.beforeEach((to, from, next) => {
     if (to.name === "Admin") {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const userDoc = await getDoc(
+                    doc(db, "users", user.displayName)
+                );
                 if (userDoc.exists() && userDoc.data().isAdmin === true) {
                     next();
                 } else {

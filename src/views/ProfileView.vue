@@ -1,10 +1,5 @@
 <template>
     <div id="all">
-        <div id="header">
-            <router-link to="/">
-                <img src="../assets/logo.png" width="120px" alt="Logo" />
-            </router-link>
-        </div>
         <div id="body">
             <div class="profile-container">
                 <div v-if="loading" class="loading-container">
@@ -160,162 +155,228 @@ const navigateToEditProfile = () => {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100vh;
+    min-height: calc(100vh - 64px); /* Subtract navbar height */
+    background-color: #f1f2f2;
+    margin-top: 64px; /* Add margin for fixed navbar */
 }
 
 #body {
     font-family: Arial, sans-serif;
-    padding: 20px;
+    padding: 24px;
     width: 100%;
     display: flex;
     flex-direction: row;
-}
-
-#header {
-    display: flex;
-    height: 20%;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .profile-container {
     display: flex;
-    min-height: 80vh;
+    min-height: calc(80vh - 64px); /* Adjust for navbar */
+    width: 300px;
+    flex-shrink: 0;
 }
 
 .loading-container {
     text-align: center;
     font-size: 18px;
-    color: #57606a;
+    color: #636466;
+    padding: 20px;
 }
 
 .profile-card {
-    border: 1px solid #d0d7de;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: max-content;
-    padding: 20px;
-    align-self: flex-start;
-    height: 100%;
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    padding: 24px;
+    height: fit-content;
 }
 
 .profile-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    text-align: center;
 }
 
 .profile-pic {
-    width: 70%;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    border: 2px solid #d0d7de;
-    margin-right: 20px;
+    border: 3px solid #e2e2e2;
+    margin-bottom: 16px;
+    object-fit: cover;
 }
 
 .profile-info {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .profile-name {
     font-size: 24px;
     font-weight: bold;
     margin: 0;
+    color: #2b2b2b;
 }
 
 .profile-email {
     font-size: 14px;
-    color: #57606a;
-    margin: 5px 0 0;
+    color: #636466;
+    margin: 8px 0 0;
 }
 
 .profile-body {
-    margin-top: 20px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e2e2;
 }
 
 .profile-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: center;
 }
 
 .btn {
-    padding: 10px 15px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-danger {
-    background-color: #d73a49;
+    background-color: #b92b27;
     color: #ffffff;
 }
 
 .btn-danger:hover {
-    background-color: #c5303f;
+    background-color: #a52622;
+    transform: translateY(-1px);
 }
 
 .btn-edit {
-    background-color: #0366d6;
+    background-color: #2b2b2b;
     color: #ffffff;
 }
 
 .btn-edit:hover {
-    background-color: #0353b4;
+    background-color: #6b6b6c;
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
 .btn-primary {
-    background-color: #2ea44f;
+    background-color: #b92b27;
     color: #ffffff;
     text-decoration: none;
     text-align: center;
     display: inline-block;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-    background-color: #22863a;
+    background-color: #a52622;
+    transform: translateY(-1px);
 }
 
 .not-logged-in {
     text-align: center;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 #discussions-container {
-    display: flex;
-    width: 80%;
-    height: 100%;
-    padding-left: 5%;
+    flex: 1;
+    min-width: 0;
 }
 
 .user-discussions {
-    height: 100%;
-    width: 100%;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
 }
 
 .user-discussions ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 .discussion-item {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #d0d7de;
-    width: 100%;
+    margin-bottom: 16px;
+    padding: 16px;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+.discussion-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.discussion-item a {
+    color: #2b2b2b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.discussion-item a:hover {
+    color: #b92b27;
+}
+
+.discussion-item p {
+    color: #636466;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+/* Add responsive adjustments */
+@media (max-width: 768px) {
+    #all {
+        margin-top: 80px; /* Increase margin for mobile navbar */
+    }
+
+    #body {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .profile-container {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .profile-card {
+        margin-bottom: 24px;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 </style>

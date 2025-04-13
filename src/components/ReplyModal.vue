@@ -1,9 +1,9 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { post_reply } from '../composables/PostReply';
-import { auth } from '@/firebase'
+import { post_reply } from "../composables/PostReply";
+import { auth } from "@/firebase";
 
 const router = useRouter();
 
@@ -20,12 +20,12 @@ const props = defineProps({
     parent_depth: {
         type: Number,
         default: -1,
-    }
+    },
 });
 let User = ref(null);
-let reply_text = ref('')
+let reply_text = ref("");
 let user_connected = ref(false);
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged((user) => {
     if (user) {
         // User is logged in; you can fetch additional data if needed.
         User.value = user;
@@ -40,7 +40,11 @@ auth.onAuthStateChanged(user => {
 <template>
     <div class="mt-2 d-flex flex-column gap-3 p-2 border rounded">
         <div class="form-floating">
-            <textarea class="form-control" style="height: 100px" v-model="reply_text"></textarea>
+            <textarea
+                class="form-control"
+                style="height: 100px"
+                v-model="reply_text"
+            ></textarea>
             <label for="floatingTextarea2">Reply to @{{ to_whom }}</label>
         </div>
         <div class="d-flex gap-2">
@@ -48,9 +52,16 @@ auth.onAuthStateChanged(user => {
                 type="button"
                 class="rounded-pill btn"
                 :class="user_connected ? 'btn-dark' : 'btn-danger'"
-                :disabled="reply_text.trim() === '' || !user_connected"
+                :disabled="reply_text == '' || !user_connected"
                 @click="
-                    post_reply(router, route, author, parent_id, reply_text)
+                    post_reply(
+                        User.displayName,
+                        reply_text,
+                        parent_id,
+                        parent_depth + 1,
+                        to_whom,
+                        router
+                    )
                 "
             >
                 Send
@@ -69,12 +80,5 @@ auth.onAuthStateChanged(user => {
 <style scoped>
 .border {
     border: solid grey;
-}
-button:disabled {
-    background-color: #e0e0e0;
-    color: #a0a0a0;
-    cursor: not-allowed;
-    border: 1px solid #d0d0d0;
-    opacity: 0.6;
 }
 </style>

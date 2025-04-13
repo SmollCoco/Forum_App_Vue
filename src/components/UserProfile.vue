@@ -27,7 +27,7 @@
                         />
                         <div class="profile-info">
                             <h2 class="profile-name">
-                                {{ userInfo.uid }}
+                                {{ userInfo.displayName }}
                             </h2>
                             <p class="profile-email">{{ userInfo.email }}</p>
                         </div>
@@ -253,9 +253,40 @@
     width: 100%;
 }
 
-/* .discussion-item :hover {
-    background-color: #25699f;
-} */
+.discussion-item a {
+    text-decoration: none;
+}
+
+.discussion-item strong {
+    color: #b92b27;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.discussion-item p {
+    color: #636466;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #body {
+        flex-direction: column;
+    }
+
+    #discussions-container {
+        width: 100%;
+        padding-left: 0;
+        margin-top: 20px;
+    }
+
+    .profile-card {
+        width: 100%;
+    }
+}
 </style>
 <script setup>
 import { ref, watch } from "vue";
@@ -289,7 +320,7 @@ watch(userId, async (newVal) => {
             discussions.value = allDiscussions.value.filter(
                 (discussion) =>
                     userInfo.value &&
-                    discussion.auteur === userInfo.value.uid // Fixed to use `username`
+                    discussion.auteur === userInfo.value.displayName // Fixed to use `username`
             );
         } catch (error) {
             console.error("Error fetching user info or discussions:", error);

@@ -1,42 +1,58 @@
 <template>
-    <div id="register">
-        <div id="header">
-            <router-link to="/">
-                <img src="../assets/logo.png" width="120px" alt="Logo" />
-            </router-link>
-        </div>
-        <form @submit.prevent="handleRegister">
-            <div>
-                <label>Email</label>
-                <input v-model="email" type="email" required />
+    <div class="register-wrapper">
+        <form @submit.prevent="handleRegister" class="register-form">
+            <h2 class="register-title">Create Account</h2>
+            <div class="formitem">
+                <label for="email">Email</label>
+                <input id="email" v-model="email" type="email" required />
             </div>
-            <div>
-                <label>Password</label>
-                <input v-model="password" type="password" required />
+            <div class="formitem">
+                <label for="username">Username</label>
+                <input id="username" v-model="username" type="text" required />
             </div>
-            <div>
-                <label>Confirm Password</label>
-                <input v-model="confirmPassword" type="password" required />
-            </div>
-            <div>
-                <label>Username</label>
-                <input v-model="username" type="text" required />
-            </div>
-            <div>
-                <label>Profile Picture</label>
+            <div class="formitem">
+                <label for="password">Password</label>
                 <input
+                    id="password"
+                    v-model="password"
+                    type="password"
+                    required
+                />
+            </div>
+            <div class="formitem">
+                <label for="confirm-password">Confirm Password</label>
+                <input
+                    id="confirm-password"
+                    v-model="confirmPassword"
+                    type="password"
+                    required
+                />
+            </div>
+            <div class="formitem">
+                <label for="profile-picture">Profile Picture</label>
+                <input
+                    id="profile-picture"
                     type="file"
                     @change="handleFileUpload"
                     :disabled="isUploading"
+                    class="file-input"
                 />
-                <span v-if="isUploading">Uploading...</span>
-                <img
-                    :src="profilePicture || DEFAULT_PROFILE_PICTURE"
-                    alt="Profile Preview"
-                    class="profile-preview"
-                />
+                <div class="upload-status">
+                    <span v-if="isUploading" class="uploading"
+                        >Uploading...</span
+                    >
+                    <img
+                        :src="profilePicture || DEFAULT_PROFILE_PICTURE"
+                        alt="Profile Preview"
+                        class="profile-preview"
+                    />
+                </div>
             </div>
-            <button type="submit" :disabled="loading">
+            <button
+                type="submit"
+                class="submit-btn"
+                :disabled="loading || isUploading"
+            >
                 {{ loading ? "Creating Account..." : "Create Account" }}
             </button>
             <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -49,6 +65,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { registerUser } from "@/composables/userRegistration";
 import { uploadToGitHub } from "@/composables/uploadToGitHub";
+import defaultProfilePic from "@/assets/user.png";
 
 const email = ref("");
 const password = ref("");
@@ -59,7 +76,7 @@ const errorMessage = ref("");
 const loading = ref(false);
 const isUploading = ref(false);
 
-const DEFAULT_PROFILE_PICTURE = "@/src/assets/user.png";
+const DEFAULT_PROFILE_PICTURE = defaultProfilePic;
 const router = useRouter();
 
 const handleFileUpload = async (event) => {
@@ -130,53 +147,139 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-form {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
-    padding: 20px;
+.register-wrapper {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    max-width: 400px;
-    margin: auto;
+    min-height: calc(100vh - 64px);
+    background-color: #f1f2f2;
+    margin-top: 64px; /* Add margin for fixed navbar */
+    padding: 24px;
 }
 
-form div {
+.register-form {
+    background: white;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.register-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2b2b2b;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.formitem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 16px;
+}
+
+.formitem label {
+    font-weight: 500;
+    color: #2b2b2b;
 }
 
 input {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
+input:focus {
+    outline: none;
+    border-color: #b92b27;
 }
 
-button:hover {
-    background-color: var(--primary-hover);
+.file-input {
+    border: 1px dashed #e2e2e2;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.file-input:hover {
+    border-color: #b92b27;
+}
+
+.upload-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.uploading {
+    color: #636466;
+    font-size: 14px;
 }
 
 .profile-preview {
-    width: 100px;
-    height: 100px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    margin-top: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid #e2e2e2;
+    object-fit: cover;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #b92b27;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #a52622;
+    transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+    background-color: #e2e2e2;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .error {
-    color: red;
+    color: #b92b27;
     font-size: 14px;
     text-align: center;
+    margin-top: 12px;
+    padding: 8px;
+    background-color: #ffebee;
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .register-wrapper {
+        margin-top: 80px; /* Increase margin for mobile navbar */
+        padding: 16px;
+    }
+
+    .register-form {
+        padding: 20px;
+    }
+
+    .submit-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
 }
 </style>

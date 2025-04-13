@@ -1,11 +1,7 @@
 <template>
-    <div>
-        <div id="header">
-            <router-link to="/">
-                <img src="../assets/logo.png" width="120px" alt="Logo" />
-            </router-link>
-        </div>
-        <form @submit.prevent="handleLogin">
+    <div class="login-wrapper">
+        <form @submit.prevent="handleLogin" class="login-form">
+            <h2 class="login-title">Login</h2>
             <div class="formitem">
                 <label for="username"> Username: </label>
                 <input type="text" id="username" v-model="username" required />
@@ -28,7 +24,7 @@
                     </button>
                 </div>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" class="submit-btn">Login</button>
         </form>
     </div>
 </template>
@@ -61,60 +57,113 @@ const togglePasswordVisibility = () => {
 </script>
 
 <style scoped>
-form {
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    background-color: #f1f2f2;
+    margin-top: 64px; /* Add margin for fixed navbar */
+    padding: 24px;
+}
+
+.login-form {
     background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
-    padding: 20px;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
     width: 100%;
     max-width: 400px;
-    margin: auto;
+    margin: 0 auto;
 }
 
-form div {
-    margin-bottom: 16px;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
+.login-title {
+    font-size: 24px;
     font-weight: bold;
-}
-
-button:hover {
-    background-color: var(--primary-hover);
+    color: #2b2b2b;
+    margin-bottom: 24px;
+    text-align: center;
 }
 
 .formitem {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 16px;
 }
+
+.formitem label {
+    font-weight: 500;
+    color: #2b2b2b;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #b92b27;
+}
+
 .password-container {
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .toggle-password {
     background: none;
     border: none;
-    color: #25699f;
+    color: #b92b27;
     cursor: pointer;
     font-size: 14px;
+    padding: 0;
+    width: auto;
 }
+
 .toggle-password:hover {
     text-decoration: underline;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #b92b27;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #a52622;
+    transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-wrapper {
+        margin-top: 80px; /* Increase margin for mobile navbar */
+        padding: 16px;
+    }
+
+    .login-form {
+        padding: 20px;
+    }
+
+    .submit-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
 }
 </style>
