@@ -3,6 +3,7 @@ import { useStore } from "./getDiscussions";
 const visited = new Set();
 
 export async function getReplies(idref, replies = []) {
+  console.log(idref);
     const { discussions, fetchDiscussions } = useStore();
 
     if (discussions.value.length === 0) {

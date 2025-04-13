@@ -5,47 +5,45 @@ import TopicItem from "./TopicItem.vue";
 import ReplyModal from "./ReplyModal.vue";
 import { get_date_string } from "../composables/dateString";
 import DiscussionSetting from "./DiscussionSetting.vue";
-import { reportDiscussion } from "@/composables/SignalerDisc";
-
 const props = defineProps({
-    id: {
-        type: String,
-        required: true,
-        default: "id",
-    },
-    auteur: {
-        type: String,
-        required: true,
-        default: "Yassine",
-    },
-    date: {
-        type: Date,
-        required: true,
-        default: () => new Date(),
-    },
-    titre: {
-        type: String,
-        required: true,
-        default: "Dummy Post",
-    },
-    topic: {
-        type: Array,
-        required: true,
-        default: () => ["Friendship", "Leadership"],
-    },
-    contenu: {
-        type: String,
-        required: true,
-        default: "Some content",
-    },
+  id: {
+    type: String,
+    required: true,
+    default: "id",
+  },
+  auteur: {
+    type: String,
+    required: true,
+    default: "Yassine",
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: () => new Date(),
+  },
+  titre: {
+    type: String,
+    required: true,
+    default: "Dummy Post",
+  },
+  topic: {
+    type: Array,
+    required: true,
+    default: () => ["Friendship", "Leadership"],
+  },
+  contenu: {
+    type: String,
+    required: true,
+    default: "Some content",
+  },
 });
 
 let date_string = computed(() => {
-    return get_date_string(props.date);
+  return get_date_string(props.date);
 });
 
 let preview = computed(() => {
-    return props.contenu.substring(0, 50);
+  return props.contenu.substring(0, 50);
 });
 
 let show_response = ref(false);
@@ -56,68 +54,56 @@ const handleReport = async () => {
 </script>
 
 <template>
-    <div class="discussion-item">
-        <!-- Link to the discussion -->
-        <router-link :to="`/discussion/${id}`" class="discussion-link">
-            <div class="discussion-header">
-                <!-- Author and date -->
-                <router-link :to="`/profile/${auteur}`" class="author-link">
-                    <span class="author">u/{{ auteur }}</span>
-                </router-link>
-                <span class="date">| {{ date_string }} |</span>
-                <!-- Topics -->
-                <div class="topics">
-                    <topic-item
-                        v-for="(i, index) in topic"
-                        :key="index"
-                        :topic="i"
-                    />
-                </div>
-            </div>
-            <!-- Title and preview -->
-            <div class="discussion-title">{{ titre }}</div>
-            <div class="discussion-preview">{{ preview }}</div>
-        </router-link>
-
-        <!-- Actions: Reply and Settings -->
-        <div class="discussion-actions">
-            <button class="reply-btn" @click="show_response = !show_response">
-                Reply
-            </button>
-            <DiscussionSetting :id="id" :username="auteur" />
+  <div class="m-2 p-2 r-link">
+    <router-link :to="`/discussion/${id}`" class="r-link">
+      <div class="w-100 d-flex gap-lg-2 flex-column rounded p-2">
+        <!--Header containing the author, the topics and the date-->
+        <div class="d-flex align-items-center z-1">
+          <router-link
+            :to="`/profile/${auteur}`"
+            class="d-flex gap-2 text-decoration-none align-items-center"
+          >
+            <span class="d-block link div-link">u/{{ auteur }}</span>
+          </router-link>
+          <span style="color: gray; font-size: small">
+            | {{ date_string }} |
+          </span>
+          <div v-for="(i, index) of topic" :key="index">
+            <topic-item :topic="i" />
+          </div>
         </div>
-
-        <!-- Reply Modal -->
-        <reply-modal
-            v-if="show_response"
-            :to_whom="auteur"
-            :parent_id="id"
-            @cancel="show_response = false"
-        />
+        <div class="fs-3 fw-bold div-link">{{ titre }}</div>
+        <div>{{ preview }}</div>
+      </div>
+    </router-link>
+    <div class="w-100 d-flex gap-lg-2 justify-content-between rounded p-2">
+      <div
+        class="reply-btn rounded-pill fw-bold fx-w h-25 align-self-end"
+        @click="show_response = !show_response"
+      >
+        <span class="material-icons">reply</span>
+        Reply
+      </div>
+      <DiscussionSetting class="z-2" :id="id" :username="auteur" />
     </div>
+    <reply-modal
+      v-if="show_response"
+      :to_whom="auteur"
+      :parent_id="id"
+      @cancel="show_response = false"
+    />
+  </div>
 </template>
 
 <style scoped>
-/* General styling for the discussion item */
-.discussion-item {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
-    padding: 16px;
-    margin-bottom: 16px;
-    transition: all 0.3s ease;
+.link {
+  font-weight: 500;
+  color: black;
+  text-decoration: none;
 }
 
-.discussion-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--shadow-color);
-}
-
-/* Link styling */
-.discussion-link {
-    text-decoration: none;
-    color: inherit;
+.link:hover {
+  color: rgb(10, 73, 209);
 }
 
 /* Header styling */
@@ -133,8 +119,8 @@ const handleReport = async () => {
     color: var(--primary-color);
 }
 
-.author-link:hover {
-    text-decoration: underline;
+.div-link:hover {
+  text-decoration: underline;
 }
 
 .author {
@@ -183,5 +169,23 @@ const handleReport = async () => {
 
 .reply-btn:hover {
     background-color: var(--primary-hover);
+}
+.reply-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: bold;
+  background-color: rgb(219, 219, 219);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.reply-btn:hover {
+  background-color: black;
+  color: white;
+}
+.reply-btn .material-icons {
+  font-size: 18px;
 }
 </style>

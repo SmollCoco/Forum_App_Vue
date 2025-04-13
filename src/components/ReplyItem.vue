@@ -28,6 +28,16 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    depth: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
+    parentName: {
+        type: String,
+        required: true,
+        default: "Parent",
+    },
 });
 
 let date_string = computed(() => {
@@ -85,6 +95,7 @@ let date_string = computed(() => {
 
 .div-link {
     font-size: 14px;
+    color: black;
 }
 
 .div-link:hover {
@@ -93,7 +104,7 @@ let date_string = computed(() => {
 
 .fx-w {
     font-size: 14px;
-    width: 60px;
+    width: 85px;
     position: relative;
     background-color: rgb(219, 219, 219);
 }

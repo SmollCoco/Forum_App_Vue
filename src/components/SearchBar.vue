@@ -4,6 +4,9 @@ import { useStore } from "@/composables/getDiscussions";
 import SearchSuggestionItem from "./SearchSuggestionItem.vue";
 
 const search_field = ref("");
+const cliick = ref(false);
+const suggestionsRef = ref(null);
+const inputref = ref(null);
 
 const { discussions, fetchDiscussions } = useStore();
 onMounted(() => {

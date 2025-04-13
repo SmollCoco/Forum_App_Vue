@@ -1,9 +1,17 @@
-<!-- eslint-disable no-unused-vars -->
 <script setup>
-import { ref, onMounted } from "vue";
-import DiscussionItem from "./DiscussionItem.vue";
-import { useStore } from "@/composables/getDiscussions";
-import { DateFilter } from "@/composables/date_filter";
+import { ref, onMounted, watch } from 'vue';
+import DiscussionItem from './DiscussionItem.vue';
+import { useStore } from '@/composables/getDiscussions';
+import { getTopic_Disc } from '@/composables/getTopic_Disc';
+import {DateFilter} from '@/composables/date_filter';
+
+const props = defineProps({
+  topic: {
+    type: String,
+    required: false,
+    default: "",
+  },
+});
 
 const { discussions, fetchDiscussions } = useStore();
 const filteredDiscussions = ref([]);
