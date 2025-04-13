@@ -36,7 +36,7 @@
                             <strong>Status:</strong>
                             {{ isLoggedIn ? "Logged In" : "Logged Out" }}
                         </p>
-                        <div class="profile-actions">
+                        <div v-if="isOwnProfile" class="profile-actions">
                             <button
                                 class="btn btn-danger"
                                 @click="handleLogout"
@@ -94,6 +94,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getUserInfo } from "@/composables/useUserInfo";
 import { useStore } from "@/composables/getDiscussions";
 import logout from "@/composables/userLogout";
+import { auth } from "@/firebase";
 
 const route = useRoute();
 const router = useRouter();
@@ -102,6 +103,7 @@ const userInfo = ref(null);
 const discussions = ref([]);
 const loading = ref(true);
 const isLoggedIn = ref(false);
+const isOwnProfile = ref(false);
 
 const { discussions: allDiscussions, fetchDiscussions } = useStore();
 
@@ -117,6 +119,12 @@ onMounted(async () => {
             return;
         }
         isLoggedIn.value = !!userInfo.value;
+
+        // Check if this is the user's own profile
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+            isOwnProfile.value = currentUser.displayName === username;
+        }
 
         // Fetch discussions authored by the user
         await fetchDiscussions();
@@ -296,5 +304,18 @@ const navigateToEditProfile = () => {
     padding: 10px;
     border: 1px solid #d0d7de;
     width: 100%;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 </style>

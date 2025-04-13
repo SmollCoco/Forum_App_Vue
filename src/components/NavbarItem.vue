@@ -5,6 +5,8 @@ import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getUserInfo } from "@/composables/useUserInfo";
 import SearchBar from "./SearchBar.vue";
+import { db } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const props = defineProps({
     username: {
@@ -15,7 +17,8 @@ const props = defineProps({
 
 let user_connected = ref(false);
 let currentUser = ref(null);
-let username = ref("");
+let displayName = ref("");
+let isAdmin = ref(false);
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -25,14 +28,22 @@ onAuthStateChanged(auth, async (user) => {
         // Fetch the username from Firestore
         const userInfo = await getUserInfo(user.displayName);
         if (userInfo) {
-            username.value = userInfo.username; // Set the username
+            displayName.value = userInfo.username; // Set the username
         } else {
             console.warn("User info not found in Firestore.");
+        }
+
+        // Check if user is admin
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            isAdmin.value = userDoc.data().isAdmin === true;
+            console.log("User is admin:", isAdmin.value); // Debug log
         }
     } else {
         user_connected.value = false;
         currentUser.value = null;
-        username.value = "";
+        displayName.value = "";
+        isAdmin.value = false;
     }
 });
 
@@ -64,6 +75,15 @@ const logout = async () => {
         <!-- User Actions -->
         <div>
             <div v-if="user_connected" class="d-flex gap-3">
+                <!-- Admin Panel Button -->
+                <router-link
+                    v-if="isAdmin"
+                    to="/admin"
+                    class="btn btn-warning rounded-pill text-white fw-bold"
+                >
+                    Admin Panel
+                </router-link>
+
                 <!-- Create Button -->
                 <router-link
                     :to="`/submit/${currentUser?.displayName || 'user'}`"

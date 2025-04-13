@@ -4,10 +4,15 @@ import { DeleteDisc } from "../composables/SupDisc";
 import { auth } from "@/firebase";
 import { getUserInfo } from "@/composables/useUserInfo";
 import { useRouter } from "vue-router";
-import { reportDiscussion } from "@/composables/SignalerDisc";
+import { useReport } from "@/composables/useReport";
+import { db } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import ReportConfirmationModal from "./ReportConfirmationModal.vue";
 
 const optionsShow = ref(false);
+const showReportModal = ref(false);
 const router = useRouter();
+const { reportMessage, canReport } = useReport();
 
 const props = defineProps({
     id: {
@@ -28,10 +33,18 @@ watch(
         const user = auth.currentUser;
         if (user) {
             const userInfo = await getUserInfo(user.displayName);
-            disable.value[0] = user.displayName !== props.username; // Disable edit if not the owner
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const userRole = userDoc.data()?.role;
+
+            // Disable edit if not the owner
+            disable.value[0] = user.displayName !== props.username;
+
+            // Enable delete if user is owner, admin, or moderator
             disable.value[1] = !(
-                user.displayName === props.username || userInfo?.isAdmin
-            ); // Disable delete if not the owner or admin
+                user.displayName === props.username ||
+                userInfo?.isAdmin ||
+                userRole === "moderator"
+            );
         } else {
             disable.value = [true, true]; // Disable all actions if not logged in
         }
@@ -46,13 +59,49 @@ const handleDelete = async () => {
 };
 
 const handleReport = async () => {
-    try {
-        await reportDiscussion(props.id);
-        alert("Discussion reported successfully.");
-    } catch (error) {
-        console.error("Error reporting discussion:", error);
-        alert("Failed to report discussion. Please try again.");
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Please log in to report content");
+        return;
     }
+
+    console.log("Checking if user can report...");
+    const canUserReport = await canReport(user.uid, props.id);
+    console.log("Can user report:", canUserReport);
+
+    if (!canUserReport) {
+        alert("You have already reported this content");
+        return;
+    }
+
+    showReportModal.value = true;
+};
+
+const handleReportConfirm = async (reason) => {
+    try {
+        console.log("Attempting to report content...");
+        const success = await reportMessage(
+            props.id,
+            auth.currentUser.uid,
+            reason
+        );
+        console.log("Report success:", success);
+
+        if (success) {
+            alert("Content reported successfully");
+        } else {
+            alert("Failed to report content. Please try again.");
+        }
+    } catch (error) {
+        console.error("Error in handleReport:", error);
+        alert("Failed to report content. Please try again.");
+    } finally {
+        showReportModal.value = false;
+    }
+};
+
+const handleReportCancel = () => {
+    showReportModal.value = false;
 };
 </script>
 
@@ -106,6 +155,13 @@ const handleReport = async () => {
             <span class="material-icons">more_vert</span>
             Options
         </div>
+
+        <!-- Report Confirmation Modal -->
+        <ReportConfirmationModal
+            :show="showReportModal"
+            @confirm="handleReportConfirm"
+            @cancel="handleReportCancel"
+        />
     </div>
 </template>
 
