@@ -37,4 +37,8 @@
         border: 1px solid  #B92B27  ;
         color: #B92B27;
 }
+.btn-sm:hover{
+    background-color: #dc3545;
+    color: white;
+}
 </style>
