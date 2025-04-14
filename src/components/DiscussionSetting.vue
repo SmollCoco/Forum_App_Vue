@@ -212,32 +212,37 @@ const handleReportCancel = () => {
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    color: inherit;
     width: 100%;
+    color: green;
+}
+
+.btn-link:hover {
+    color: #2b2b2b;
 }
 
 .btn-outline-success {
-    color: #2e7d32;
+    color: green;
 }
 
 .btn-outline-success:hover {
     background-color: #e8f5e9;
+    color: #2b2b2b;
 }
 
 .btn-outline-danger {
-    color: #b92b27;
 }
 
 .btn-outline-danger:hover {
     background-color: #ffebee;
+    color: #2b2b2b;
 }
 
 .btn-outline-warning {
-    color: #f57c00;
 }
 
 .btn-outline-warning:hover {
     background-color: #fff3e0;
+    color: #2b2b2b;
 }
 
 .material-icons {
@@ -248,6 +253,7 @@ const handleReportCancel = () => {
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    color: #666;
 }
 
 button:disabled:hover {
@@ -257,5 +263,6 @@ button:disabled:hover {
 
 button:disabled .btn-link {
     pointer-events: none;
+    color: #666;
 }
 </style>
