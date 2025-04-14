@@ -15,15 +15,29 @@ const props = defineProps({
 
 const { discussions, fetchDiscussions } = useStore();
 const filteredDiscussions = ref([]);
-const ordre = ref("arrow_downward");
+
+const emit = defineEmits(["clear-topic"]);
 
 async function filterDiscussions() {
     await fetchDiscussions();
-    filteredDiscussions.value = discussions.value.filter(
-        (discussion) => discussion.parent == null
-    );
+    console.log(discussions.value[0].date);
+
+    if (!props.topic) {
+        filteredDiscussions.value = discussions.value.filter(
+            (disc) => disc.parent == null
+        );
+    } else {
+        console.log("Filtering with topic:", props.topic);
+        filteredDiscussions.value = await getTopic_Disc("", props.topic);
+        console.log("Filtered results:", filteredDiscussions.value);
+    }
 }
 
+watch(() => props.topic, filterDiscussions);
+
+onMounted(filterDiscussions);
+
+const ordre = ref("arrow_downward");
 function toggle() {
     ordre.value =
         ordre.value === "arrow_upward" ? "arrow_downward" : "arrow_upward";
@@ -32,12 +46,16 @@ function toggle() {
         ordre.value
     );
 }
-
-onMounted(filterDiscussions);
 </script>
 
 <template>
     <div class="discussion-list-container">
+        <!-- Topic Indicator -->
+        <div class="topic-indicator" v-if="props.topic">
+            <span class="topic-label">Showing discussions in topic:</span>
+            <span class="topic-value">{{ props.topic }}</span>
+        </div>
+
         <!-- Date Sorting Button -->
         <div class="date-sorting-container">
             <button class="sort-button" @click="toggle">
@@ -144,5 +162,46 @@ onMounted(filterDiscussions);
 
 .reply-btn:hover {
     background-color: var(--primary-hover);
+}
+
+.topic-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #e3f2fd;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: #1976d2;
+}
+
+.topic-label {
+    font-weight: 500;
+}
+
+.topic-value {
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.clear-topic-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #1976d2;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.clear-topic-btn:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+}
+
+.clear-topic-btn .material-icons {
+    font-size: 1.25rem;
 }
 </style>
