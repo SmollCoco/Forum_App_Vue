@@ -7,6 +7,10 @@ import { getUserInfo } from "@/composables/useUserInfo";
 import SearchBar from "./SearchBar.vue";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import logout from "@/composables/userLogout";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps({
     username: {
@@ -19,6 +23,16 @@ let user_connected = ref(false);
 let currentUser = ref(null);
 let displayName = ref("");
 let isAdmin = ref(false);
+
+// Handle logout
+const handleLogout = async () => {
+    try {
+        await logout();
+        router.push("/");
+    } catch (error) {
+        console.error("Logout failed:", error);
+    }
+};
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -46,16 +60,6 @@ onAuthStateChanged(auth, async (user) => {
         isAdmin.value = false;
     }
 });
-
-const logout = async () => {
-    try {
-        await auth.signOut();
-        alert("Logged out successfully.");
-    } catch (error) {
-        console.error("Logout failed:", error);
-        alert("Failed to log out. Please try again.");
-    }
-};
 </script>
 
 <template>
@@ -111,7 +115,7 @@ const logout = async () => {
                     <!-- Logout Button -->
                     <button
                         class="btn btn-danger rounded-pill px-3"
-                        @click="logout"
+                        @click="handleLogout"
                     >
                         <span class="material-icons align-middle me-1"
                             >logout</span
