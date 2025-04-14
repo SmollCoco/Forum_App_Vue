@@ -4,7 +4,7 @@ export async function uploadToGitHub(imageFile, fileName) {
     const repoOwner = "SmollCoco";
     const repoName = "forum-app-vue-pfps";
     const branch = "main";
-    const token = "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";
+    const token = import.meta.env.VITE_GITHUB_TOKEN;
     if (!token) {
         throw new Error(
             "GitHub token is missing. Please configure it in your environment."
