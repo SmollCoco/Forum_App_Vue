@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getUserInfo } from "@/composables/useUserInfo";
 import { useStore } from "@/composables/getDiscussions";
@@ -93,7 +93,7 @@ import { auth } from "@/firebase";
 
 const route = useRoute();
 const router = useRouter();
-const username = route.params.username; // Use username from route params
+const username = ref(route.params.username);
 const userInfo = ref(null);
 const discussions = ref([]);
 const loading = ref(true);
@@ -102,15 +102,17 @@ const isOwnProfile = ref(false);
 
 const { discussions: allDiscussions, fetchDiscussions } = useStore();
 
-onMounted(async () => {
+const loadProfileData = async () => {
     try {
         loading.value = true;
+        userInfo.value = null;
+        discussions.value = [];
 
         // Fetch user info by username
-        userInfo.value = await getUserInfo(username);
+        userInfo.value = await getUserInfo(username.value);
         if (!userInfo.value) {
             alert("User not found.");
-            router.push("/"); // Redirect to home if user not found
+            router.push("/");
             return;
         }
         isLoggedIn.value = !!userInfo.value;
@@ -118,13 +120,13 @@ onMounted(async () => {
         // Check if this is the user's own profile
         const currentUser = auth.currentUser;
         if (currentUser) {
-            isOwnProfile.value = currentUser.displayName === username;
+            isOwnProfile.value = currentUser.displayName === username.value;
         }
 
         // Fetch discussions authored by the user
         await fetchDiscussions();
         discussions.value = allDiscussions.value.filter(
-            (discussion) => discussion.auteur === username
+            (discussion) => discussion.auteur === username.value
         );
     } catch (error) {
         console.error("Error loading profile:", error);
@@ -132,7 +134,18 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
-});
+};
+
+// Watch for route parameter changes
+watch(
+    () => route.params.username,
+    (newUsername) => {
+        username.value = newUsername;
+        loadProfileData();
+    }
+);
+
+onMounted(loadProfileData);
 
 // Handle logout
 const handleLogout = async () => {

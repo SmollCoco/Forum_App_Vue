@@ -36,7 +36,7 @@ export async function registerUser(email, password, username, pfp) {
 
         // Add the username mapping to Firestore
         await setDoc(usernameDocRef, {
-            displayName: username, // Use the username as the unique identifier
+            uid: username, // Use the username as the unique identifier
         });
 
         // Add the user to the Firestore database with `username` as the document ID
