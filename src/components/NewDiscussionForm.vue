@@ -137,7 +137,7 @@ onMounted(async () => {
 <style scoped>
 /* Layout */
 .discussion-form {
-    max-width: 800px;
+    width: 70%;
     margin: 0 auto;
     padding: 2rem 1rem;
 }
